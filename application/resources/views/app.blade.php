@@ -10,6 +10,8 @@
 </head>
 
 <body>
-  <div id="app"></div>
+  <div class="container">
+    <div id="app" class="flex-item"></div>
+  </div>
 </body>
 </html>
