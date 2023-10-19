@@ -1,13 +1,12 @@
 <script setup lang="ts">
 interface Props {
   infoNum: string,
-  imgFileName: string
+  imgFileName: string,
+  infoBody: string,
 }
 
 const props = defineProps<Props>();
-
-const infoNum = props.infoNum;
-const imgFileName = props.imgFileName;
+const { infoNum, imgFileName, infoBody } = props
 </script>
 <template>
   <div class="w-11/12 bg-white rounded-lg py-16 relative">
@@ -17,8 +16,7 @@ const imgFileName = props.imgFileName;
     </div>
     <img :src="`assets/images/${imgFileName}`" :alt="'info' + infoNum" class="mx-auto">
     <div class="w-28 h-0.5 bg-forest rotate-[80deg] absolute top-3/4 -left-[12%]"></div>
-    <p class="text-center mt-5">
-      <slot></slot>
+    <p class="text-center mt-5" v-html="infoBody">
     </p>
     <div class="w-28 h-0.5 bg-forest -rotate-[80deg] absolute top-3/4 -right-[12%]"></div>
   </div>

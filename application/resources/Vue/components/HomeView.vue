@@ -8,6 +8,30 @@ const displayModal = ref(true);
 function onShowModal() {
   displayModal.value = displayModal.value ? false : true;
 }
+
+interface playInfoInterface {
+  imgFileName: string,
+  infoBody: string
+}
+
+const playInfo: playInfoInterface[] = [
+  {
+    imgFileName: 'undraw_select_player_64ca1.svg',
+    infoBody: '<span class="text-forest font-bold">Distance Game</span>は<br>最大4人までプレイが可能です！<br><span class="text-forest font-bold">お友達や家族、みんなで遊べるゲームです</span><br>さぁ、プレイヤーを見つけて<br>ゲームを開始しよう'
+  },
+  {
+    imgFileName: 'undraw_select_player_64ca1.svg',
+    infoBody: '<span class="text-forest font-bold">Distance Game</span>は<br>最大4人までプレイが可能です！<br><span class="text-forest font-bold">お友達や家族、みんなで遊べるゲームです</span><br>さぁ、プレイヤーを見つけて<br>ゲームを開始しよう'
+  },
+  {
+    imgFileName: 'undraw_select_player_64ca1.svg',
+    infoBody: '<span class="text-forest font-bold">Distance Game</span>は<br>最大4人までプレイが可能です！<br><span class="text-forest font-bold">お友達や家族、みんなで遊べるゲームです</span><br>さぁ、プレイヤーを見つけて<br>ゲームを開始しよう'
+  },
+  {
+    imgFileName: 'undraw_select_player_64ca1.svg',
+    infoBody: '<span class="text-forest font-bold">Distance Game</span>は<br>最大4人までプレイが可能です！<br><span class="text-forest font-bold">お友達や家族、みんなで遊べるゲームです</span><br>さぁ、プレイヤーを見つけて<br>ゲームを開始しよう'
+  },
+]
 </script>
 
 <template>
@@ -25,15 +49,7 @@ function onShowModal() {
     </div>
   </div>
   <div v-show="displayModal" class="w-full min-h-screen bg-shadow relative top-0 left-0 flex justify-center items-center">
-    <InfoModal :info-num="'01'" :img-file-name="'undraw_select_player_64ca1.svg'">
-      <p class="text-center mt-5">
-        <span class="text-forest font-bold">
-          Distance Game</span>は<br>
-        最大4人までプレイが可能です！<br>
-        <span class="text-forest font-bold">お友達や家族、みんなで遊べるゲームです</span><br>
-        さぁ、プレイヤーを見つけて<br>
-        ゲームを開始しよう
-      </p>
-    </InfoModal>
+    <InfoModal v-for="(value, key) in playInfo" :key="key" :info-num="'0' + (key + 1)" :img-file-name="value.imgFileName"
+      :info-body="value.infoBody" />
   </div>
 </template>
