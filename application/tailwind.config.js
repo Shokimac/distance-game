@@ -1,3 +1,4 @@
+/* eslint-disable */
 module.exports = {
   content: [
       "./resources/**/*.blade.php",
@@ -5,7 +6,17 @@ module.exports = {
       "./resources/**/*.vue",
   ],
   theme: {
-      extend: {},
+    extend: {
+      colors: {
+        'forest': '#189193',
+        'shadow': 'rgba(19, 20, 20, 0.6)',
+      }
+    },
+    fontFamily: {
+      din: [
+        'DIN Condensed'
+      ],
+    },
   },
   plugins: [],
 }
