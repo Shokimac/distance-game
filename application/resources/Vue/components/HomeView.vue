@@ -1,7 +1,7 @@
 <!-- eslint-disable prettier/prettier -->
 <script setup lang="ts">
 import { reactive } from "vue";
-import InfoModal from "../components/ViewParts/InfoModal.vue"
+import InfoModal from "./ViewParts/infomodal.vue"
 
 interface playInfoInterface {
   imgFileName: string,
