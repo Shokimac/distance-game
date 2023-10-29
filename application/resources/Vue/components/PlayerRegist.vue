@@ -1,10 +1,14 @@
 <script setup lang="ts">
 import PlayerRegistForm from './ViewParts/PlayerRegistForm.vue';
-import { reactive } from "vue";
+import { reactive, ref } from "vue";
 interface RegistForm {
   num: number,
   isDisplay: boolean
 }
+
+const MAX_FORM_COUNT = 4;
+const MIN_PLAYER = 2;
+const isNotEnoughPlayers = ref(false);
 
 const registForms: RegistForm[] = reactive([
   {
@@ -14,23 +18,35 @@ const registForms: RegistForm[] = reactive([
   {
     num: 2,
     isDisplay: true
-  },
-  {
-    num: 3,
-    isDisplay: false
-  },
-  {
-    num: 4,
-    isDisplay: false
-  },
+  }
 ]);
 
 const addForm = (): void => {
-  if (registForms[2].isDisplay) {
-    registForms[3].isDisplay = true;
-  } else {
-    registForms[2].isDisplay = true;
+  if (registForms.length < MAX_FORM_COUNT) {
+    registForms.push({
+      num: registForms.length + 1,
+      isDisplay: true
+    });
   }
+}
+
+const checkForm = (): void => {
+  const pattern = '^[^ 　]*$';
+  let form: HTMLInputElement | null;
+  let validForms = 0;
+  for (let i = 1; i <= MAX_FORM_COUNT; i++) {
+    form = document.querySelector(`input[name="form${i}"]`);
+    if (form && form.value && form.value.match(pattern)) {
+      ++validForms;
+    }
+  }
+  console.log(validForms);
+  if (validForms < MIN_PLAYER) {
+    isNotEnoughPlayers.value = true;
+  } else {
+    isNotEnoughPlayers.value = false;
+  }
+  return;
 }
 
 </script>
@@ -43,16 +59,25 @@ const addForm = (): void => {
     <div class="w-full mt-5">
       <p class="text-center font-extrabold text-xl">プレイヤー名を入力してください</p>
       <p class="text-center font-bold mt-2">（最大4人までプレイ可能）</p>
-      <div class="mt-5 w-9/12 h-56 mx-auto">
-        <PlayerRegistForm v-for="(value, key) in registForms" :key="key" :num="value.num" v-show="value.isDisplay" />
-        <div class="w-full mt-8 flex justify-center">
-          <button @click="addForm" v-show="!registForms[3].isDisplay">
-            <div class="w-9 h-9 bg-forest rounded-full flex justify-center text-white font-bold text-2xl">+</div>
+      <div class="h-6">
+        <p v-show="isNotEnoughPlayers" class="text-center font-bold text-red-500 mt-2">プレイするには最低2名の登録が必要です</p>
+      </div>
+      <div class="mt-3 w-9/12 h-56 mx-auto">
+        <form @submit.prevent="checkForm" method="post">
+          <PlayerRegistForm v-for="(value, key) in registForms" :key="key" :num="value.num" v-show="value.isDisplay"
+            :is-error="isNotEnoughPlayers" />
+          <div class="w-full mt-8 flex justify-center">
+            <div @click="addForm" v-show="!(registForms.length === MAX_FORM_COUNT)">
+              <div
+                class="w-9 h-9 bg-forest rounded-full flex justify-center text-white font-bold text-2xl cursor-pointer">+
+              </div>
+            </div>
+          </div>
+          <button class="bg-forest text-white py-3 px-8 font-bold rounded-full text-2xl block mx-auto mt-10 shadow-lg"
+            type="submit">
+            目的地を決める
           </button>
-        </div>
-        <button
-          class="bg-forest text-white py-3 px-8 font-bold rounded-full text-2xl block mx-auto mt-10 shadow-lg">目的地を決める
-        </button>
+        </form>
       </div>
     </div>
   </div>
