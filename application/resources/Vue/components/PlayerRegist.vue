@@ -1,14 +1,18 @@
 <script setup lang="ts">
 import PlayerRegistForm from './ViewParts/PlayerRegistForm.vue';
 import { reactive, ref } from "vue";
+import { useRouter } from "vue-router";
 interface RegistForm {
   num: number,
   isDisplay: boolean
 }
 
+const router = useRouter();
+
 const MAX_FORM_COUNT = 4;
 const MIN_PLAYER = 2;
 const isNotEnoughPlayers = ref(false);
+const errorMessage = ref('');
 
 const registForms: RegistForm[] = reactive([
   {
@@ -31,23 +35,30 @@ const addForm = (): void => {
 }
 
 const checkForm = (): void => {
-  const pattern = '^[^ 　]*$';
   let form: HTMLInputElement | null;
-  let validForms = 0;
+  const gamePlayers: string[] = [];
   for (let i = 1; i <= MAX_FORM_COUNT; i++) {
     form = document.querySelector(`input[name="form${i}"]`);
-    if (form && form.value && form.value.match(pattern)) {
-      ++validForms;
+    if (form && form.value) {
+      gamePlayers.push(form.value);
     }
   }
-  console.log(validForms);
-  if (validForms < MIN_PLAYER) {
+  if (gamePlayers.length < MIN_PLAYER) {
     isNotEnoughPlayers.value = true;
+    errorMessage.value = '最低2名のユーザー登録が必要です。';
+    return;
   } else {
     isNotEnoughPlayers.value = false;
+    router.push({ name: 'game' });
   }
-  return;
 }
+
+// const checkUserName = (name: string): boolean => {
+//   const reg = new RegExp('[^\x01-\x7E]');
+//   console.log(name);
+//   console.log(reg.test(name));
+//   return reg.test(name);
+// }
 
 </script>
 
@@ -60,7 +71,7 @@ const checkForm = (): void => {
       <p class="text-center font-extrabold text-xl">プレイヤー名を入力してください</p>
       <p class="text-center font-bold mt-2">（最大4人までプレイ可能）</p>
       <div class="h-6">
-        <p v-show="isNotEnoughPlayers" class="text-center font-bold text-red-500 mt-2">プレイするには最低2名の登録が必要です</p>
+        <p v-show="isNotEnoughPlayers" class="text-center font-bold text-red-500 mt-2">{{ errorMessage }}</p>
       </div>
       <div class="mt-3 w-9/12 h-56 mx-auto">
         <form @submit.prevent="checkForm" method="post">
