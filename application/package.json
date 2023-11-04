@@ -23,6 +23,8 @@
         "vite-plugin-vuetify": "^1.0.2"
     },
     "dependencies": {
-        "vue-router": "^4.2.5"
+        "@googlemaps/js-api-loader": "^1.16.2",
+        "vue-router": "^4.2.5",
+        "vue3-google-map": "^0.18.0"
     }
 }

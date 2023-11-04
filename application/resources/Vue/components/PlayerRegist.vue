@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import PlayerRegistForm from './ViewParts/PlayerRegistForm.vue';
+import SubmitButton from './ViewParts/SubmitButton.vue';
 import { reactive, ref } from "vue";
 import { useRouter } from "vue-router";
 interface RegistForm {
@@ -77,17 +78,14 @@ const checkForm = (): void => {
         <form @submit.prevent="checkForm" method="post">
           <PlayerRegistForm v-for="(value, key) in registForms" :key="key" :num="value.num" v-show="value.isDisplay"
             :is-error="isNotEnoughPlayers" />
-          <div class="w-full mt-8 flex justify-center">
+          <div class="w-full mt-8 mb-10 flex justify-center">
             <div @click="addForm" v-show="!(registForms.length === MAX_FORM_COUNT)">
               <div
                 class="w-9 h-9 bg-forest rounded-full flex justify-center text-white font-bold text-2xl cursor-pointer">+
               </div>
             </div>
           </div>
-          <button class="bg-forest text-white py-3 px-8 font-bold rounded-full text-2xl block mx-auto mt-10 shadow-lg"
-            type="submit">
-            目的地を決める
-          </button>
+          <SubmitButton :type="'submit'" :label="'目的地を決める'" />
         </form>
       </div>
     </div>

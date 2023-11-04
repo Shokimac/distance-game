@@ -10,7 +10,7 @@
         "plugin:prettier/recommended"
     ],
     "parserOptions": {
-        "ecmaVersion": "latest",
+        "ecmaVersion": 13,
         "parser": "@typescript-eslint/parser",
         "sourceType": "module"
     },
@@ -25,6 +25,12 @@
             {
               "singleQuote": true,
               "parser": "flow"
+            }
+          ],
+          "@typescript-eslint/no-empty-interface": [
+            "error",
+            {
+              "allowSingleExtends": true
             }
           ]
     }
