@@ -3,6 +3,7 @@ import PlayerRegistForm from './ViewParts/PlayerRegistForm.vue';
 import SubmitButton from './ViewParts/SubmitButton.vue';
 import { reactive, ref } from "vue";
 import { useRouter } from "vue-router";
+import axios from "axios";
 interface RegistForm {
   num: number,
   isDisplay: boolean
@@ -35,7 +36,7 @@ const addForm = (): void => {
   }
 }
 
-const checkForm = (): void => {
+const execRegist = async (): Promise<void> => {
   let form: HTMLInputElement | null;
   const gamePlayers: string[] = [];
   for (let i = 1; i <= MAX_FORM_COUNT; i++) {
@@ -44,13 +45,26 @@ const checkForm = (): void => {
       gamePlayers.push(form.value);
     }
   }
+  if (checkForm(gamePlayers)) {
+    try {
+      const res = await axios.post('/api/games', gamePlayers);
+      console.log(res);
+      // router.push({ name: 'game' });
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+}
+
+const checkForm = (gamePlayers: string[]): boolean => {
   if (gamePlayers.length < MIN_PLAYER) {
     isNotEnoughPlayers.value = true;
     errorMessage.value = '最低2名のユーザー登録が必要です。';
-    return;
+    return false;
   } else {
     isNotEnoughPlayers.value = false;
-    router.push({ name: 'game' });
+    return true;
   }
 }
 
@@ -75,7 +89,7 @@ const checkForm = (): void => {
         <p v-show="isNotEnoughPlayers" class="text-center font-bold text-red-500 mt-2">{{ errorMessage }}</p>
       </div>
       <div class="mt-3 w-9/12 h-56 mx-auto">
-        <form @submit.prevent="checkForm" method="post">
+        <form @submit.prevent="execRegist" method="post">
           <PlayerRegistForm v-for="(value, key) in registForms" :key="key" :num="value.num" v-show="value.isDisplay"
             :is-error="isNotEnoughPlayers" />
           <div class="w-full mt-8 mb-10 flex justify-center">

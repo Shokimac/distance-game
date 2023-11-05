@@ -29,7 +29,8 @@ class GameController extends Controller
      */
     public function store(StoreGameRequest $request)
     {
-        //
+        $val = $request->session()->put('key');
+        return response()->json(['session_key' => $val], 200);
     }
 
     /**

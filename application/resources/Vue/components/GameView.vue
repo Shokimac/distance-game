@@ -12,7 +12,6 @@ const showDestinationModal = ref(true);
 const hideDestinationModal = (() => {
   showDestinationModal.value = false;
 })
-
 </script>
 
 <template>
