@@ -47,9 +47,11 @@ const execRegist = async (): Promise<void> => {
   }
   if (checkForm(gamePlayers)) {
     try {
-      const res = await axios.post('/api/games', gamePlayers);
-      console.log(res);
-      // router.push({ name: 'game' });
+      const { data } = await axios.post('/api/games', {
+        'registPlayerNames': gamePlayers
+      });
+      const { destinationLocation, game, players } = data;
+      router.push(`/game/${game.id}`);
     } catch (error) {
       console.log(error);
     }
