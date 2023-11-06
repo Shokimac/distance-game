@@ -3,12 +3,13 @@ import PlayerRegistForm from './ViewParts/PlayerRegistForm.vue';
 import SubmitButton from './ViewParts/SubmitButton.vue';
 import { reactive, ref } from "vue";
 import { useRouter } from "vue-router";
-import axios from "axios";
+import { ApiModule } from '../../ts/api/ApiModule';
 interface RegistForm {
   num: number,
   isDisplay: boolean
 }
 
+const api = new ApiModule();
 const router = useRouter();
 
 const MAX_FORM_COUNT = 4;
@@ -47,16 +48,17 @@ const execRegist = async (): Promise<void> => {
   }
   if (checkForm(gamePlayers)) {
     try {
-      const { data } = await axios.post('/api/games', {
-        'registPlayerNames': gamePlayers
-      });
-      const { destinationLocation, game, players } = data;
-      router.push(`/game/${game.id}`);
+      const { value: game, error } = await api.createGame(gamePlayers);
+      if (game) {
+        router.push(`/game/${game.id}`);
+      }
+      if (error) {
+        errorMessage.value = 'ゲームの登録に失敗しました。お手数ですが、もう一度お試しください。';
+      }
     } catch (error) {
-      console.log(error);
+      errorMessage.value = '通信に失敗しました。お手数ですが、もう一度お試しください。'
     }
   }
-
 }
 
 const checkForm = (gamePlayers: string[]): boolean => {
@@ -69,13 +71,6 @@ const checkForm = (gamePlayers: string[]): boolean => {
     return true;
   }
 }
-
-// const checkUserName = (name: string): boolean => {
-//   const reg = new RegExp('[^\x01-\x7E]');
-//   console.log(name);
-//   console.log(reg.test(name));
-//   return reg.test(name);
-// }
 
 </script>
 

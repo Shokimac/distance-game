@@ -4,6 +4,7 @@ namespace App\Domain\Game\Infrastructure\Repository;
 
 use App\Domain\Game\Domain\Entity\GameEntity;
 use App\Domain\Game\Domain\Repository\GameRepositoryInterface;
+use App\Domain\Game\Domain\ValueObject\GameId;
 use App\Models\Game as GameModel;
 use Illuminate\Support\Facades\DB;
 
@@ -26,5 +27,15 @@ final class MysqlGameRepository implements GameRepositoryInterface
     $sql .= ' (:id, :destination_postal_code, NOW(), NOW())';
 
     DB::insert($sql, $params);
+  }
+
+  public function find(GameId $gameId)
+  {
+    $params = ['id' => $gameId->value()];
+
+    $sql = 'SELECT * FROM  ' . $this->gameTableName . PHP_EOL;
+    $sql .= ' WHERE id = :id';
+
+    return DB::selectOne($sql, $params);
   }
 }

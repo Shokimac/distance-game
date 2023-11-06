@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Domain\Game\Domain\ValueObject\DestinationPostalCode;
 use App\Domain\Game\Domain\ValueObject\GameId;
 use App\Domain\Game\UseCase\CreateGameUseCase;
+use App\Domain\Game\UseCase\FindGameUseCase;
 use App\Domain\Location\Domain\Entity\LocationEntity;
 use App\Domain\Location\Domain\ValueObject\City;
 use App\Domain\Location\Domain\ValueObject\CityKana;
@@ -23,14 +24,20 @@ use Illuminate\Support\Facades\DB;
 
 class GameController extends Controller
 {
+    // ユースケース
     private $createGameUseCase;
+    private $findGameUseCase;
+
+    // リポジトリ
     private $locationRepository;
 
     public function __construct(
         CreateGameUseCase $createGameUseCase,
+        FindGameUseCase $findGameUseCase,
         LocationRepositoryInterface $locationRepository,
     ) {
         $this->createGameUseCase = $createGameUseCase;
+        $this->findGameUseCase = $findGameUseCase;
         $this->locationRepository = $locationRepository;
     }
     /**
@@ -54,6 +61,8 @@ class GameController extends Controller
      */
     public function store(StoreGameRequest $request)
     {
+        $registPlayerNames = $request->input('registPlayerNames');
+
         $pickRandomLocation = $this->locationRepository->findRandomLocation();
         $locationEntity = new LocationEntity(
             locationId: new LocationId($pickRandomLocation->id),
@@ -72,17 +81,12 @@ class GameController extends Controller
                 new DestinationPostalCode($locationEntity->getPostalCode()->value()),
             );
 
-            $registPlayerNames = $request->input('registPlayerNames');
-
-            $players = [];
             foreach ($registPlayerNames as $key => $playerName) {
                 $turn = $key + 1;
-                $playerEntity = $gameEntity->insertPlayer(
+                $gameEntity->insertPlayer(
                     playerName: new PlayerName($playerName),
                     playerTurn: new PlayerTurn($turn)
                 );
-
-                $players[$turn] = $playerEntity->toArray();
             }
 
             DB::commit();
@@ -91,19 +95,20 @@ class GameController extends Controller
             return response()->json(['message' => '登録に失敗しました。'], 500);
         }
 
-        return response()->json([
-            'destinationLocation' => $locationEntity->toArray(),
-            'game' => $gameEntity->toArray(),
-            'players' => $players,
-        ], 200);
+        return response()->json(
+            $gameEntity->toArray(),
+            200
+        );
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Game $game)
+    public function show(string $gameId)
     {
-        //
+        $gameEntity = $this->findGameUseCase->execute(new GameId(id: $gameId));
+
+        return response()->json($gameEntity->toArray(), 200);
     }
 
     /**
