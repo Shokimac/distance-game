@@ -21,6 +21,8 @@ export interface Location {
     town: string;
     city_kana: string;
     town_kana: string;
+    lat?: string;
+    lng?: string;
 }
 
 export interface EarthCoordinate {

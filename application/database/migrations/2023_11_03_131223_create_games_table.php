@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('games', function (Blueprint $table) {
             $table->string('id', 50)->unique();
-            $table->string('destination_postal_code', 7)->comment('目的地の郵便番号');
+            $table->string('destination_location_id', 50)->comment('目的地')->references('id')->on('location');
             $table->timestamps();
         });
     }

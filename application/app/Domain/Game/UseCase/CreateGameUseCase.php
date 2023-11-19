@@ -19,7 +19,7 @@ final class CreateGameUseCase
 
     $gameEntity = new GameEntity(
       gameId: $gameId,
-      destinationPostalCode: $destinationPostalCode,
+      destinationPostalCode: $destinationPostalCode, // ここをlocationIDにしないといけないっぽい
     );
 
     $gameEntity->insertGame();

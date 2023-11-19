@@ -1,5 +1,14 @@
 <script setup lang="ts">
 import SubmitButton from './SubmitButton.vue';
+import { Location } from '../../../ts/types';
+
+interface Props {
+  location: Location
+}
+
+const props = defineProps<Props>();
+
+const location = props;
 
 interface Emits {
   (event: "hideDestinationModal"): void

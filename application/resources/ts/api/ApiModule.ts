@@ -1,6 +1,8 @@
 import axios from "axios";
-import { Game, Player, Location } from "../types";
+import { Game, Player, Location, GeoAPIResponse } from "../types";
 import { ApiInterface, ErrorCode } from "./ApiInterface";
+
+const API_KEY = import.meta.env.VITE_GOOGLE_API_KEY;
 
 export class ApiModule implements ApiInterface {
     async createGame(playerNames: string[]) {
@@ -60,4 +62,38 @@ export class ApiModule implements ApiInterface {
             return { value: null!, error: error };
         }
     }
+
+    async getLatitudeLongitude(postalCode: string) {
+        try {
+            const { data } = await axios.get<GeoAPIResponse>(
+                `https://geoapi.heartrails.com/api/json?method=searchByPostal&postal=${postalCode}`,
+            );
+            if (data) {
+                const value = data.response.location[0];
+                return { value, error: null! };
+            }
+            const error: ErrorCode = "failure";
+            return { value: null!, error: error };
+        } catch (e) {
+            const error: ErrorCode = "failure";
+            return { value: null!, error: error };
+        }
+    }
+}
+
+interface GeoAPIResponse {
+    response: {
+        location: [
+            {
+                city: string;
+                city_kana: string;
+                town: string;
+                town_kana: string;
+                x: string;
+                y: string;
+                prefecture: string;
+                postal: string;
+            },
+        ];
+    };
 }

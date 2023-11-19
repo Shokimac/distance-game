@@ -108,6 +108,8 @@ class GameController extends Controller
     {
         $gameEntity = $this->findGameUseCase->execute(new GameId(id: $gameId));
 
+        $test = $gameEntity->toArray();
+
         return response()->json($gameEntity->toArray(), 200);
     }
 

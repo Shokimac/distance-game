@@ -11,17 +11,24 @@ const api = new ApiModule();
 
 const API_KEY = import.meta.env.VITE_GOOGLE_API_KEY;
 
+const center = ref(<EarthCoordinate>{ lat: 35.692041, lng: 139.7292123 });
+
+const showGoogleMap = ref(false);
+const showDestinationModal = ref(true);
+
 onBeforeMount(async () => {
   const gameId = route.params.gameId as string;
-  const { value, error } = await api.findGame(gameId);
-  if (value) {
-
+  const { value: game, error } = await api.findGame(gameId);
+  if (game) {
+    const { value: location, error: locationError } = await api.findLocation();
+    const { value: location, error: err } = await api.getLatitudeLongitude();
+    if (location) {
+      location
+    }
   }
-})
-
-const center = { lat: 35.692041, lng: 139.7292123 };
-
-const showDestinationModal = ref(true);
+  showGoogleMap.value = true;
+  showDestinationModal.value = true;
+});
 
 const hideDestinationModal = (() => {
   showDestinationModal.value = false;
@@ -29,8 +36,8 @@ const hideDestinationModal = (() => {
 </script>
 
 <template>
-  <div class="relative">
-    <GoogleMap :api-key="API_KEY" :center="center" :zoom="17" style="width: 100%; height: 100vh;"
+  <div class="relative" v-show="showGoogleMap">
+    <GoogleMap :api-key="API_KEY" :center="center" :zoom="11" style="width: 100%; height: 100vh;"
       :disable-default-ui="true">
       <Marker :options="{ position: center }" />
     </GoogleMap>
