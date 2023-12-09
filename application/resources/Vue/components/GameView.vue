@@ -4,7 +4,8 @@ import { GoogleMap, Marker } from "vue3-google-map";
 import DestinationModal from "./ViewParts/DestinationModal.vue";
 import { ApiModule } from "../../ts/api/ApiModule";
 import { useRoute } from "vue-router";
-import { Location } from "../../ts/types";
+import { Location, Player } from "../../ts/types";
+import SubmitButton from "./ViewParts/SubmitButton.vue";
 
 const route = useRoute();
 const api = new ApiModule();
@@ -14,6 +15,7 @@ const API_KEY = import.meta.env.VITE_GOOGLE_API_KEY;
 const showGoogleMap = ref(false);
 const showDestinationModal = ref(false);
 const destinationLocation = ref(<Location>{});
+const players = ref(<Player[]>[]);
 
 onBeforeMount(async () => {
   const gameId = route.params.gameId as string;
@@ -22,6 +24,9 @@ onBeforeMount(async () => {
     const { value: location, error: locationError } = await api.findLocation(game.destination_location_id);
     if (location) {
       destinationLocation.value = location;
+
+      const { value: playersData, error: getPlayerError } = await api.findPlayersByGame(game.id);
+      players.value = playersData;
     }
   }
   showGoogleMap.value = true;
@@ -41,6 +46,19 @@ const hideDestinationModal = (() => {
       <Marker
         :options="{ position: { lat: parseInt(destinationLocation.latitude), lng: parseInt(destinationLocation.longitude) } }" />
     </GoogleMap>
+    <div class="w-full z-10 absolute bottom-32 bg-white pb-20">
+      <div class="border-b border-gray-500"></div>
+      <ul>
+        <li v-for="(player, index) in players" :key="index" class="w-full px-2 py-4">
+          <img :src="`/assets/icons/rank_flag_${index + 1}.svg`" :alt="`${index + 1}着ランクアイコン`" class="inline">
+          {{ player.name }}
+        </li>
+      </ul>
+    </div>
+    <div class="w-full z-20 absolute bottom-0 bg-white pb-10">
+      <p class="text-xl font-bold text-center my-5">プレイヤー1の番です</p>
+      <SubmitButton label="スロットを回す" />
+    </div>
     <DestinationModal v-if="showDestinationModal" @hide-destination-modal="hideDestinationModal"
       :location="destinationLocation" />
   </div>

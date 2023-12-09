@@ -2,6 +2,7 @@
 
 namespace App\Domain\Player\Infrastructure\Repository;
 
+use App\Domain\Game\Domain\ValueObject\GameId;
 use App\Domain\Player\Domain\Entity\PlayerEntity;
 use App\Domain\Player\Domain\Repository\PlayerRepositoryInterface;
 use App\Models\Player as PlayerModel;
@@ -26,5 +27,14 @@ final class MysqlPlayerRepository implements PlayerRepositoryInterface
     $sql .= ' (:id, :game_id, :name, :turn, :distance_to_destination, NOW(), NOW())';
 
     DB::insert($sql, $params);
+  }
+
+  public function findPlayersByGameId(GameId $gameId)
+  {
+    $params = ['game_id' => $gameId->value()];
+
+    $sql = 'SELECT * FROM ' . $this->playerTableName . ' WHERE game_id = :game_id';
+
+    return DB::select($sql, $params);
   }
 }
