@@ -12,5 +12,4 @@ export interface ApiInterface {
     findGame: (gameId: string) => APIResult<Game>;
     findPlayersByGame: (gameId: string) => APIResult<Player[]>;
     findLocation: (postalCode: string) => APIResult<Location>;
-    getLatitudeLongitude: (postalCode: string) => APIResult<Location>;
 }

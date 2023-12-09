@@ -2,12 +2,22 @@
 
 namespace App\Http\Controllers;
 
+use App\Domain\Location\Domain\ValueObject\LocationId;
+use App\Domain\Location\UseCase\FindLocationUseCase;
 use App\Http\Requests\StoreLocationRequest;
 use App\Http\Requests\UpdateLocationRequest;
 use App\Models\Location;
 
 class LocationController extends Controller
 {
+    private $findLocationUseCase;
+
+    public function __construct(
+        FindLocationUseCase $findLocationUseCase
+    ) {
+        $this->findLocationUseCase = $findLocationUseCase;
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -35,9 +45,11 @@ class LocationController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Location $location)
+    public function show(int $locationId)
     {
-        //
+        $locationEntity = $this->findLocationUseCase->execute(new LocationId($locationId));
+
+        return response()->json($locationEntity->toArray(), 200);
     }
 
     /**

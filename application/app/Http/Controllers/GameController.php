@@ -2,19 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Domain\Game\Domain\ValueObject\DestinationPostalCode;
 use App\Domain\Game\Domain\ValueObject\GameId;
 use App\Domain\Game\UseCase\CreateGameUseCase;
 use App\Domain\Game\UseCase\FindGameUseCase;
-use App\Domain\Location\Domain\Entity\LocationEntity;
-use App\Domain\Location\Domain\ValueObject\City;
-use App\Domain\Location\Domain\ValueObject\CityKana;
-use App\Domain\Location\Domain\ValueObject\LocationId;
-use App\Domain\Location\Domain\ValueObject\PostalCode;
-use App\Domain\Location\Domain\ValueObject\Prefecture;
-use App\Domain\Location\Domain\ValueObject\Town;
-use App\Domain\Location\Domain\ValueObject\TownKana;
-use App\Domain\Location\Domain\Repository\LocationRepositoryInterface;
 use App\Domain\Player\Domain\ValueObject\PlayerName;
 use App\Domain\Player\Domain\ValueObject\PlayerTurn;
 use App\Http\Requests\StoreGameRequest;
@@ -28,17 +18,12 @@ class GameController extends Controller
     private $createGameUseCase;
     private $findGameUseCase;
 
-    // リポジトリ
-    private $locationRepository;
-
     public function __construct(
         CreateGameUseCase $createGameUseCase,
         FindGameUseCase $findGameUseCase,
-        LocationRepositoryInterface $locationRepository,
     ) {
         $this->createGameUseCase = $createGameUseCase;
         $this->findGameUseCase = $findGameUseCase;
-        $this->locationRepository = $locationRepository;
     }
     /**
      * Display a listing of the resource.
@@ -63,22 +48,10 @@ class GameController extends Controller
     {
         $registPlayerNames = $request->input('registPlayerNames');
 
-        $pickRandomLocation = $this->locationRepository->findRandomLocation();
-        $locationEntity = new LocationEntity(
-            locationId: new LocationId($pickRandomLocation->id),
-            postalCode: new PostalCode($pickRandomLocation->postal_code),
-            prefecture: new Prefecture($pickRandomLocation->prefecture),
-            city: new City($pickRandomLocation->city),
-            town: new Town($pickRandomLocation->town),
-            cityKana: new CityKana($pickRandomLocation->city_kana),
-            townKana: new TownKana($pickRandomLocation->town_kana)
-        );
-
         try {
             DB::beginTransaction();
             $gameEntity = $this->createGameUseCase->execute(
-                new GameId(uniqid()),
-                new DestinationPostalCode($locationEntity->getPostalCode()->value()),
+                new GameId(uniqid())
             );
 
             foreach ($registPlayerNames as $key => $playerName) {
@@ -107,8 +80,6 @@ class GameController extends Controller
     public function show(string $gameId)
     {
         $gameEntity = $this->findGameUseCase->execute(new GameId(id: $gameId));
-
-        $test = $gameEntity->toArray();
 
         return response()->json($gameEntity->toArray(), 200);
     }

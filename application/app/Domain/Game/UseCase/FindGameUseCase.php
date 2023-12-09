@@ -4,8 +4,8 @@ namespace App\Domain\Game\UseCase;
 
 use App\Domain\Game\Domain\Entity\GameEntity;
 use App\Domain\Game\Domain\Repository\GameRepositoryInterface;
-use App\Domain\Game\Domain\ValueObject\DestinationPostalCode;
 use App\Domain\Game\Domain\ValueObject\GameId;
+use App\Domain\Location\Domain\ValueObject\LocationId;
 
 final class FindGameUseCase
 {
@@ -21,7 +21,7 @@ final class FindGameUseCase
 
     $gameEntity = new GameEntity(
       gameId: $gameId,
-      destinationPostalCode: new DestinationPostalCode($gameData->destination_postal_code),
+      destinationLocationId: new LocationId($gameData->destination_location_id)
     );
 
     return $gameEntity;

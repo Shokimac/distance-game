@@ -2,7 +2,7 @@ export type CommonType<T> = T | null;
 
 export interface Game {
     id: string;
-    destination_postal_code: string;
+    destination_location_id: string;
 }
 
 export interface Player {
@@ -21,11 +21,6 @@ export interface Location {
     town: string;
     city_kana: string;
     town_kana: string;
-    lat?: string;
-    lng?: string;
-}
-
-export interface EarthCoordinate {
-    lat: number;
-    lng: number;
+    latitude: string;
+    longitude: string;
 }

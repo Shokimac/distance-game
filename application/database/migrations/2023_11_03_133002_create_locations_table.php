@@ -19,8 +19,8 @@ return new class extends Migration
             $table->string('town')->comment('区画名');
             $table->text('city_kana')->comment('市区町村名ふりがな');
             $table->text('town_kana')->comment('区画名ふりがな');
-            $table->float('latitude')->comment('緯度');
-            $table->float('longitude')->comment('経度');
+            $table->string('latitude')->comment('緯度')->nullable();
+            $table->string('longitude')->comment('経度')->nullable();
             $table->timestamps();
         });
     }

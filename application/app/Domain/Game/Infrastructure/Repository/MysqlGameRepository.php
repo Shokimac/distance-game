@@ -22,9 +22,9 @@ final class MysqlGameRepository implements GameRepositoryInterface
     $params = $gameEntity->toArray();
 
     $sql = 'INSERT INTO ' . $this->gameTableName . PHP_EOL;
-    $sql .= ' (id, destination_postal_code, created_at, updated_at)' . PHP_EOL;
+    $sql .= ' (id, destination_location_id, created_at, updated_at)' . PHP_EOL;
     $sql .= ' VALUES' . PHP_EOL;
-    $sql .= ' (:id, :destination_postal_code, NOW(), NOW())';
+    $sql .= ' (:id, :destination_location_id, NOW(), NOW())';
 
     DB::insert($sql, $params);
   }

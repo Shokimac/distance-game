@@ -3,8 +3,8 @@
 namespace App\Domain\Game\Domain\Entity;
 
 use App\Domain\Game\Domain\Repository\GameRepositoryInterface;
-use App\Domain\Game\Domain\ValueObject\DestinationPostalCode;
 use App\Domain\Game\Domain\ValueObject\GameId;
+use App\Domain\Location\Domain\ValueObject\LocationId;
 use App\Domain\Player\Domain\Entity\PlayerEntity;
 use App\Domain\Player\Domain\Repository\PlayerRepositoryInterface;
 use App\Domain\Player\Domain\ValueObject\DistanceToDestination;
@@ -16,7 +16,7 @@ use Illuminate\Foundation\Application;
 final class GameEntity
 {
   private $gameId;
-  private $destinationPostalCode;
+  private $destinationLocationId;
 
   // Repository
   private $gameRepository;
@@ -24,10 +24,10 @@ final class GameEntity
 
   public function __construct(
     GameId $gameId,
-    DestinationPostalCode $destinationPostalCode,
+    LocationId $destinationLocationId
   ) {
     $this->gameId = $gameId;
-    $this->destinationPostalCode = $destinationPostalCode;
+    $this->destinationLocationId = $destinationLocationId;
 
     $app = Application::getInstance();
     $this->gameRepository = $app->make(GameRepositoryInterface::class);
@@ -39,16 +39,16 @@ final class GameEntity
     return $this->gameId;
   }
 
-  public function getDestinationPostalCode(): DestinationPostalCode
+  public function getDestinationLocationId(): LocationId
   {
-    return $this->destinationPostalCode;
+    return $this->destinationLocationId;
   }
 
   public function toArray(): array
   {
     return [
       'id' => $this->gameId->value(),
-      'destination_postal_code' => $this->destinationPostalCode->value()
+      'destination_location_id' => $this->destinationLocationId->value()
     ];
   }
 
