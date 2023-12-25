@@ -47,11 +47,30 @@ const hideDestinationModal = (() => {
         :options="{ position: { lat: parseInt(destinationLocation.latitude), lng: parseInt(destinationLocation.longitude) } }" />
     </GoogleMap>
     <div class="w-full z-10 absolute bottom-32 bg-white pb-20">
-      <div class="border-b border-gray-500"></div>
-      <ul>
+      <div class="w-8 h-0.5 bg-gray-400 mx-auto mt-3"></div>
+      <ul class="ml-5">
         <li v-for="(player, index) in players" :key="index" class="w-full px-2 py-4">
-          <img :src="`/assets/icons/rank_flag_${index + 1}.svg`" :alt="`${index + 1}着ランクアイコン`" class="inline">
-          {{ player.name }}
+          <div class="flex w-full">
+            <div class="w-12">
+              <img :src="`/assets/icons/rank_flag_${index + 1}.svg`" :alt="`${index + 1}着ランクアイコン`"
+                class="inline mr-4 max-w-full">
+            </div>
+            <div class="w-full flex">
+              <div class="w-1/2 font-bold text-center">
+                <span class="text-lg">〒</span><span class="text-forest text-3xl font-din">000</span><span
+                  class="font-extrabold text-xl">-</span><span class="text-forest text-3xl font-din">0000</span>
+              </div>
+              <div class="w-1/2 flex flex-col">
+                <div class="w-full text-right font-bold">
+                  <span class="text-forest font-din text-3xl">0</span>km
+                </div>
+                <div class="w-full text-sm truncate">
+                  <img :src="`/assets/icons/map-pin-user-fill.svg`" alt="ユーザーアイコン" class="inline mr-0.5">{{ player.name
+                  }}さん
+                </div>
+              </div>
+            </div>
+          </div>
         </li>
       </ul>
     </div>
