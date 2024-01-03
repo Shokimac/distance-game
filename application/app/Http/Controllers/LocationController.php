@@ -88,5 +88,7 @@ class LocationController extends Controller
     public function getByPostalCode(string $postalCode)
     {
         $location = $this->findLocationByPostalCodeUseCase->execute(postalCode: new PostalCode(postalCode: $postalCode));
+
+        return response()->json($location->toArray(), 200);
     }
 }

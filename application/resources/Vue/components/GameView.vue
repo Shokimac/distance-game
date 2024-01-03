@@ -17,6 +17,7 @@ const showGoogleMap = ref(false);
 const showDestinationModal = ref(false);
 const destinationLocation = ref(<Location>{});
 const players = ref(<Player[]>[]);
+const showSlotModal = ref(false);
 
 onBeforeMount(async () => {
   const gameId = route.params.gameId as string;
@@ -39,7 +40,7 @@ const hideDestinationModal = (() => {
 })
 
 const onShowSlotModal = (() => {
-
+  showSlotModal.value = true;
 })
 </script>
 
@@ -85,6 +86,6 @@ const onShowSlotModal = (() => {
     </div>
     <DestinationModal v-if="showDestinationModal" @hide-destination-modal="hideDestinationModal"
       :location="destinationLocation" />
-    <SlotModal />
+    <SlotModal v-show="showSlotModal" />
   </div>
 </template>

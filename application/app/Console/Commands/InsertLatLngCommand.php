@@ -46,9 +46,8 @@ class InsertLatLngCommand extends Command
                 $res = curl_exec($curl);
                 $data = json_decode($res);
                 if (isset($data->response->error)) {
-                    Log::error('API取得でエラーが発生しました。');
                     Log::error($data->response->error);
-                    exit;
+                    continue;
                 }
                 if (isset($data->response)) {
                     $info = $data->response->location[0];
