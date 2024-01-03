@@ -15,4 +15,14 @@ final class PostalCode extends PostalCodeBase
   {
     return $this->val();
   }
+
+  /**
+   * 郵便番号の頭3桁を返す
+   *
+   * @return string
+   */
+  public function headValue(): string
+  {
+    return substr($this->val(), 0, 3);
+  }
 }

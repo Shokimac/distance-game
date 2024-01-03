@@ -6,6 +6,7 @@ import { ApiModule } from "../../ts/api/ApiModule";
 import { useRoute } from "vue-router";
 import { Location, Player } from "../../ts/types";
 import SubmitButton from "./ViewParts/SubmitButton.vue";
+import SlotModal from "./ViewParts/SlotModal.vue";
 
 const route = useRoute();
 const api = new ApiModule();
@@ -35,6 +36,10 @@ onBeforeMount(async () => {
 
 const hideDestinationModal = (() => {
   showDestinationModal.value = false;
+})
+
+const onShowSlotModal = (() => {
+
 })
 </script>
 
@@ -76,9 +81,10 @@ const hideDestinationModal = (() => {
     </div>
     <div class="w-full z-20 absolute bottom-0 bg-white pb-10">
       <p class="text-xl font-bold text-center my-5">プレイヤー1の番です</p>
-      <SubmitButton label="スロットを回す" />
+      <SubmitButton label="スロットを回す" @click="onShowSlotModal" />
     </div>
     <DestinationModal v-if="showDestinationModal" @hide-destination-modal="hideDestinationModal"
       :location="destinationLocation" />
+    <SlotModal />
   </div>
 </template>

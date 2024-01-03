@@ -62,4 +62,18 @@ export class ApiModule implements ApiInterface {
             return { value: null!, error: error };
         }
     }
+
+    async getLocationByPostalCode(postalCode: string) {
+        try {
+            const { data } = await axios.get<Location>(`/api/locations/postalCode/${postalCode}`);
+            if (data) {
+                return { value: data, error: null! };
+            }
+            const error: ErrorCode = "failure";
+            return { value: null!, error: error };
+        } catch (e) {
+            const error: ErrorCode = "failure";
+            return { value: null!, error: error };
+        }
+    }
 }

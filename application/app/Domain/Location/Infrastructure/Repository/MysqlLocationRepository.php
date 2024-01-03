@@ -5,6 +5,7 @@ namespace App\Domain\Location\Infrastructure\Repository;
 use App\Domain\Location\Domain\Entity\LocationEntity;
 use App\Domain\Location\Domain\Repository\LocationRepositoryInterface;
 use App\Domain\Location\Domain\ValueObject\LocationId;
+use App\Domain\Location\Domain\ValueObject\PostalCode;
 use App\Models\Location as LocationModel;
 use Illuminate\Support\Facades\DB;
 
@@ -29,5 +30,20 @@ final class MysqlLocationRepository implements LocationRepositoryInterface
     $sql = 'SELECT * FROM ' . $this->locationTableName . ' WHERE id = :id';
 
     return DB::selectOne($sql, $params);
+  }
+
+  public function findByPostalCoce(PostalCode $postalCode)
+  {
+    $params = ['postalCode' => $postalCode->value()];
+    $sql = 'SELECT * FROM ' . $this->locationTableName . ' WHERE postal_code = :postalCode';
+
+    return DB::selectOne($sql, $params);
+  }
+
+  public function findLocationsByHeadPostalCode(PostalCode $postalCode)
+  {
+    $sql = "SELECT * FROM " . $this->locationTableName . " WHERE postal_code LIKE '{$postalCode->headValue()}%'";
+
+    return DB::select($sql);
   }
 }

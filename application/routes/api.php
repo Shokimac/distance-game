@@ -24,3 +24,4 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::resource('games', GameController::class)->only(['store', 'show']);
 Route::resource('games.players', PlayerController::class)->only(['index']);
 Route::resource('locations', LocationController::class)->only(['show']);
+Route::get('/locations/postalCode/{postalCode}', [LocationController::class, 'getByPostalCode']);
