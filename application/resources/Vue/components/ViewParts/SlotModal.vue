@@ -5,6 +5,11 @@ import { ref } from 'vue';
 import { ApiModule } from '../../../ts/api/ApiModule';
 import { Location } from '../../../ts/types/index.d'
 
+interface Emits {
+  (event: 'prickPin', location: Location): void
+}
+const emits = defineEmits<Emits>()
+
 const api = new ApiModule()
 
 const headCodeList = ref([0, 0, 0])
@@ -39,16 +44,14 @@ const confirmNum = ((number: number, index: number, type: 'head' | 'bottom'): vo
 })
 
 async function getLocation() {
-  // const postalCode = headCodeList.value.join('') + bottomCodeList.value.join('')
-  // テストのため、一時的に仮で設定
-  const postalCode = '9870061'
+  const postalCode = headCodeList.value.join('') + bottomCodeList.value.join('')
 
   const { value, error } = await api.getLocationByPostalCode(postalCode);
   location.value = value
 }
 
-const prickPin = (() => {
-
+const prickPin = ((): void => {
+  emits('prickPin', location.value);
 })
 
 </script>
