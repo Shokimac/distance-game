@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { ref, onBeforeMount } from "vue";
+import { ref, onBeforeMount, watch } from "vue";
 import { GoogleMap, Marker, Polyline } from "vue3-google-map";
 import DestinationModal from "./ViewParts/DestinationModal.vue";
 import { ApiModule } from "../../ts/api/ApiModule";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { Location, Player } from "../../ts/types";
 import SubmitButton from "./ViewParts/SubmitButton.vue";
 import SlotModal from "./ViewParts/SlotModal.vue";
@@ -14,23 +14,26 @@ interface LatLng {
 }
 
 const route = useRoute();
+const router = useRouter();
 const api = new ApiModule();
 
 const API_KEY = import.meta.env.VITE_GOOGLE_API_KEY;
 
+const gameId = route.params.gameId as string;
 const showGoogleMap = ref(false);
 const showDestinationModal = ref(false);
 const destinationLocation = ref(<Location>{});
 const destinationLocationLatLng = ref(<LatLng>{})
-const playerLocationLatLng = ref(<LatLng[]>{})
+const playerLocationLatLng = ref(<{ [key: number]: LatLng }>{});
 const players = ref(<Player[]>[]);
 const playerLocations = ref(<Location[]>[])
 const playerDistances = ref(<number[]>[])
 const playerTurn = ref(0);
 const showSlotModal = ref(false);
+const showPlayerTurnMordal = ref(false);
+const showResultModal = ref(false);
 
 onBeforeMount(async () => {
-  const gameId = route.params.gameId as string;
   const { value: game, error } = await api.findGame(gameId);
   if (game) {
     const { value: location, error: locationError } = await api.findLocation(game.destination_location_id);
@@ -45,26 +48,32 @@ onBeforeMount(async () => {
   }
   showGoogleMap.value = true;
   showDestinationModal.value = true;
-  console.log(playerLocationLatLng.value);
 });
 
 const hideDestinationModal = (() => {
   showDestinationModal.value = false;
+  showPlayerTurnMordal.value = true;
 })
 
 const onShowSlotModal = (() => {
   showSlotModal.value = true;
+  showPlayerTurnMordal.value = false;
 })
 
 const prickPin = ((location: Location) => {
   showSlotModal.value = false;
   const pinLatLng: LatLng = { lat: parseFloat(location.latitude), lng: parseFloat(location.longitude) }
-  playerLocationLatLng.value[playerTurn.value] = pinLatLng
+  playerLocationLatLng.value[playerTurn.value] = pinLatLng;
 
   playerLocations.value[playerTurn.value] = location;
   playerDistances.value[playerTurn.value] = calcDistance();
 
-  changeTurn();
+  const nextPlayerTurn = playerTurn.value + 1;
+  if (!players.value[nextPlayerTurn]) {
+    showResult();
+  } else {
+    changeTurn();
+  }
 })
 
 const R = Math.PI / 180;
@@ -79,6 +88,15 @@ function calcDistance(): number {
 
 function changeTurn(): void {
   playerTurn.value++;
+  showPlayerTurnMordal.value = true;
+}
+
+function showResult(): void {
+  showResultModal.value = true;
+}
+
+function onClickResultLink(): void {
+  router.push(`/result/${gameId}`)
 }
 </script>
 
@@ -87,6 +105,7 @@ function changeTurn(): void {
     <GoogleMap :api-key="API_KEY" :center="destinationLocationLatLng" :zoom="10" style="width: 100%; height: 100vh;"
       :disable-default-ui="true">
       <Marker :options="{ position: destinationLocationLatLng }" />
+      <!-- プレイヤーが刺したピンのマーカーと目的地のマーカーで、線を結ぶ表示をマップ上に出したいが、playerLocationLatLngに値を入れても変化をVueが検知してくれないところで詰まってるため、後回し -->
       <Marker v-if="playerLocationLatLng[playerTurn]" :options="{ position: playerLocationLatLng[playerTurn] }" />
       <Polyline v-if="playerLocationLatLng[playerTurn]"
         :options="{ path: [destinationLocationLatLng, playerLocationLatLng[playerTurn]] }" />
@@ -94,7 +113,7 @@ function changeTurn(): void {
     <div class="w-full z-10 absolute bottom-32 bg-white pb-20">
       <div class="w-8 h-0.5 bg-gray-400 mx-auto mt-3"></div>
       <ul class="ml-5">
-        <li v-for="(player, index) in players" :key="index" class="w-full px-2 py-4">
+        <li v-for="(player, index) in  players" :key="index" class="w-full px-2 py-4">
           <div class="flex w-full">
             <div class="w-12">
               <img :src="`/assets/icons/rank_flag_${index + 1}.svg`" :alt="`${index + 1}着ランクアイコン`"
@@ -123,13 +142,16 @@ function changeTurn(): void {
         </li>
       </ul>
     </div>
-    <div class="w-full z-20 absolute bottom-0 bg-white pb-10">
+    <div v-if="showPlayerTurnMordal" class="w-full z-20 absolute bottom-0 bg-white pb-10">
       <p class="text-xl font-bold text-center mt-5">{{ playerTurn + 1 }}番目のプレイヤー</p>
       <p class="text-xl font-bold text-center mb-5">{{ players[playerTurn].name }} さんの番です</p>
       <SubmitButton label="スロットを回す" @click="onShowSlotModal" />
     </div>
+    <div v-if="showResultModal" class="w-full z-20 absolute bottom-0 bg-white pb-10">
+      <SubmitButton label="結果発表はこちら" @click="onClickResultLink" />
+    </div>
     <DestinationModal v-if="showDestinationModal" @hide-destination-modal="hideDestinationModal"
       :location="destinationLocation" />
-    <SlotModal v-show="showSlotModal" @prick-pin="prickPin" />
+    <SlotModal v-show="showSlotModal" :key="playerTurn" @prick-pin="prickPin" />
   </div>
 </template>
