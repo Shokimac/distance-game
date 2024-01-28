@@ -12,10 +12,15 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('locations', function (Blueprint $table) {
-            $table->string('id', 50)->unique();
-            $table->integer('postal_code', 7)->unique()->comment('郵便番号');
+            $table->id();
+            $table->string('postal_code', 7)->comment('郵便番号');
             $table->string('prefecture')->comment('都道府県名');
             $table->string('city')->comment('市区町村名');
+            $table->string('town')->comment('区画名');
+            $table->text('city_kana')->comment('市区町村名ふりがな');
+            $table->text('town_kana')->comment('区画名ふりがな');
+            $table->string('latitude')->comment('緯度')->nullable();
+            $table->string('longitude')->comment('経度')->nullable();
             $table->timestamps();
         });
     }

@@ -2,12 +2,28 @@
 
 namespace App\Http\Controllers;
 
+use App\Domain\Location\Domain\ValueObject\LocationId;
+use App\Domain\Location\Domain\ValueObject\PostalCode;
+use App\Domain\Location\UseCase\FindLocationByPostalCodeUseCase;
+use App\Domain\Location\UseCase\FindLocationUseCase;
 use App\Http\Requests\StoreLocationRequest;
 use App\Http\Requests\UpdateLocationRequest;
 use App\Models\Location;
+use Illuminate\Http\Request;
 
 class LocationController extends Controller
 {
+    private $findLocationUseCase;
+    private $findLocationByPostalCodeUseCase;
+
+    public function __construct(
+        FindLocationUseCase $findLocationUseCase,
+        FindLocationByPostalCodeUseCase $findLocationByPostalCodeUseCase
+    ) {
+        $this->findLocationUseCase = $findLocationUseCase;
+        $this->findLocationByPostalCodeUseCase = $findLocationByPostalCodeUseCase;
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -35,9 +51,11 @@ class LocationController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Location $location)
+    public function show(int $locationId)
     {
-        //
+        $locationEntity = $this->findLocationUseCase->execute(new LocationId($locationId));
+
+        return response()->json($locationEntity->toArray(), 200);
     }
 
     /**
@@ -62,5 +80,15 @@ class LocationController extends Controller
     public function destroy(Location $location)
     {
         //
+    }
+
+    /**
+     * 郵便番号から検索
+     */
+    public function getByPostalCode(string $postalCode)
+    {
+        $location = $this->findLocationByPostalCodeUseCase->execute(postalCode: new PostalCode(postalCode: $postalCode));
+
+        return response()->json($location->toArray(), 200);
     }
 }

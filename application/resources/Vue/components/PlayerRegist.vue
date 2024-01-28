@@ -1,12 +1,15 @@
 <script setup lang="ts">
 import PlayerRegistForm from './ViewParts/PlayerRegistForm.vue';
+import SubmitButton from './ViewParts/SubmitButton.vue';
 import { reactive, ref } from "vue";
 import { useRouter } from "vue-router";
+import { ApiModule } from '../../ts/api/ApiModule';
 interface RegistForm {
   num: number,
   isDisplay: boolean
 }
 
+const api = new ApiModule();
 const router = useRouter();
 
 const MAX_FORM_COUNT = 4;
@@ -34,7 +37,7 @@ const addForm = (): void => {
   }
 }
 
-const checkForm = (): void => {
+const execRegist = async (): Promise<void> => {
   let form: HTMLInputElement | null;
   const gamePlayers: string[] = [];
   for (let i = 1; i <= MAX_FORM_COUNT; i++) {
@@ -43,22 +46,31 @@ const checkForm = (): void => {
       gamePlayers.push(form.value);
     }
   }
-  if (gamePlayers.length < MIN_PLAYER) {
-    isNotEnoughPlayers.value = true;
-    errorMessage.value = '最低2名のユーザー登録が必要です。';
-    return;
-  } else {
-    isNotEnoughPlayers.value = false;
-    router.push({ name: 'game' });
+  if (checkForm(gamePlayers)) {
+    try {
+      const { value: game, error } = await api.createGame(gamePlayers);
+      if (game) {
+        router.push(`/game/${game.id}`);
+      }
+      if (error) {
+        errorMessage.value = 'ゲームの登録に失敗しました。お手数ですが、もう一度お試しください。';
+      }
+    } catch (error) {
+      errorMessage.value = '通信に失敗しました。お手数ですが、もう一度お試しください。'
+    }
   }
 }
 
-// const checkUserName = (name: string): boolean => {
-//   const reg = new RegExp('[^\x01-\x7E]');
-//   console.log(name);
-//   console.log(reg.test(name));
-//   return reg.test(name);
-// }
+const checkForm = (gamePlayers: string[]): boolean => {
+  if (gamePlayers.length < MIN_PLAYER) {
+    isNotEnoughPlayers.value = true;
+    errorMessage.value = '最低2名のユーザー登録が必要です。';
+    return false;
+  } else {
+    isNotEnoughPlayers.value = false;
+    return true;
+  }
+}
 
 </script>
 
@@ -74,20 +86,17 @@ const checkForm = (): void => {
         <p v-show="isNotEnoughPlayers" class="text-center font-bold text-red-500 mt-2">{{ errorMessage }}</p>
       </div>
       <div class="mt-3 w-9/12 h-56 mx-auto">
-        <form @submit.prevent="checkForm" method="post">
+        <form @submit.prevent="execRegist" method="post">
           <PlayerRegistForm v-for="(value, key) in registForms" :key="key" :num="value.num" v-show="value.isDisplay"
             :is-error="isNotEnoughPlayers" />
-          <div class="w-full mt-8 flex justify-center">
+          <div class="w-full mt-8 mb-10 flex justify-center">
             <div @click="addForm" v-show="!(registForms.length === MAX_FORM_COUNT)">
               <div
                 class="w-9 h-9 bg-forest rounded-full flex justify-center text-white font-bold text-2xl cursor-pointer">+
               </div>
             </div>
           </div>
-          <button class="bg-forest text-white py-3 px-8 font-bold rounded-full text-2xl block mx-auto mt-10 shadow-lg"
-            type="submit">
-            目的地を決める
-          </button>
+          <SubmitButton :type="'submit'" :label="'目的地を決める'" />
         </form>
       </div>
     </div>

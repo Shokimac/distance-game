@@ -15,7 +15,7 @@ const routes = [
     name: 'playerregist'
   },
   {
-    path: "/game",
+    path: "/game/:gameId",
     component: GameView,
     name: 'game'
   }

@@ -2,18 +2,30 @@
 
 namespace App\Http\Controllers;
 
+use App\Domain\Game\Domain\ValueObject\GameId;
+use App\Domain\Player\UseCase\FindPlayersUseCase;
 use App\Http\Requests\StorePlayerRequest;
 use App\Http\Requests\UpdatePlayerRequest;
 use App\Models\Player;
+use Illuminate\Http\Request;
 
 class PlayerController extends Controller
 {
+    private $findPlayersUseCase;
+
+    public function __construct(FindPlayersUseCase $findPlayersUseCase)
+    {
+        $this->findPlayersUseCase = $findPlayersUseCase;
+    }
+
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(string $gameId)
     {
-        //
+        $players = $this->findPlayersUseCase->execute(gameId: new GameId($gameId));
+
+        return response()->json($players, 200);
     }
 
     /**
