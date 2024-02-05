@@ -29,6 +29,7 @@
 - AWS CDK 2.100.0
 - Docker / Docker-compose
 - GoogleMaps API
+- バックエンド側でドメイン駆動設計の採用を試みています
 
 ## 機能
 - ユーザー登録
