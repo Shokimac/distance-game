@@ -55,6 +55,11 @@ final class PlayerEntity
     return $this->distanceToDestination;
   }
 
+  public function updateDistanceToDestination(DistanceToDestination $distanceToDestination): void
+  {
+    $this->distanceToDestination = $distanceToDestination;
+  }
+
   public function toArray(): array
   {
     return [

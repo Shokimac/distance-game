@@ -3,7 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Domain\Game\Domain\ValueObject\GameId;
+use App\Domain\Player\Domain\ValueObject\DistanceToDestination;
+use App\Domain\Player\Domain\ValueObject\PlayerId;
 use App\Domain\Player\UseCase\FindPlayersUseCase;
+use App\Domain\Player\UseCase\FindPlayerUseCase;
+use App\Domain\Player\UseCase\SavePlayerDistanceUseCase;
 use App\Http\Requests\StorePlayerRequest;
 use App\Http\Requests\UpdatePlayerRequest;
 use App\Models\Player;
@@ -11,11 +15,18 @@ use Illuminate\Http\Request;
 
 class PlayerController extends Controller
 {
+    private $findPlayerUseCase;
     private $findPlayersUseCase;
+    private $savePlayerDistanceUseCase;
 
-    public function __construct(FindPlayersUseCase $findPlayersUseCase)
-    {
+    public function __construct(
+        FindPlayersUseCase $findPlayersUseCase,
+        FindPlayerUseCase $findPlayerUseCase,
+        SavePlayerDistanceUseCase $savePlayerDistanceUseCase
+    ) {
         $this->findPlayersUseCase = $findPlayersUseCase;
+        $this->findPlayerUseCase = $findPlayerUseCase;
+        $this->savePlayerDistanceUseCase = $savePlayerDistanceUseCase;
     }
 
     /**
@@ -63,9 +74,15 @@ class PlayerController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdatePlayerRequest $request, Player $player)
+    public function update(UpdatePlayerRequest $request, string $game, string $player)
     {
-        //
+        $res = $this->savePlayerDistanceUseCase->execute(playerId: new PlayerId(id: $player), distanceToDestination: new DistanceToDestination($request->input('distance')));
+
+        if ($res) {
+            return response()->json($res, 200);
+        } else {
+            return response()->json($res, 500);
+        }
     }
 
     /**

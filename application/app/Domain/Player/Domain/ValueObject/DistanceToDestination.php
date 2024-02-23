@@ -8,16 +8,16 @@ final class DistanceToDestination
 {
   private $distanceToDestination;
 
-  public function __construct(int $distanceToDestination)
+  public function __construct(float $distanceToDestination)
   {
-    if (is_null($distanceToDestination) || intval($distanceToDestination) < 0) {
+    if (is_null($distanceToDestination) || floatval($distanceToDestination) < 0) {
       throw new Exception();
     }
 
     $this->distanceToDestination = $distanceToDestination;
   }
 
-  public function value(): int
+  public function value(): float
   {
     return $this->distanceToDestination;
   }

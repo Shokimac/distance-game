@@ -60,20 +60,28 @@ const onShowSlotModal = (() => {
   showPlayerTurnMordal.value = false;
 })
 
-const prickPin = ((location: Location) => {
+const prickPin = (async (location: Location) => {
   showSlotModal.value = false;
   const pinLatLng: LatLng = { lat: parseFloat(location.latitude), lng: parseFloat(location.longitude) }
   playerLocationLatLng.value[playerTurn.value] = pinLatLng;
 
+  const calcDistanceRes = calcDistance();
   playerLocations.value[playerTurn.value] = location;
-  playerDistances.value[playerTurn.value] = calcDistance();
+  playerDistances.value[playerTurn.value] = calcDistanceRes;
 
-  const nextPlayerTurn = playerTurn.value + 1;
-  if (!players.value[nextPlayerTurn]) {
-    showResult();
+  const { value: saveDistance } = await api.saveDistanceToDestination(players.value[playerTurn.value].game_id, players.value[playerTurn.value].id, calcDistanceRes)
+
+  if (saveDistance) {
+    const nextPlayerTurn = playerTurn.value + 1;
+    if (!players.value[nextPlayerTurn]) {
+      showResult();
+    } else {
+      changeTurn();
+    }
   } else {
-    changeTurn();
+    console.error('算出した距離の保存処理に失敗しました');
   }
+
 })
 
 const R = Math.PI / 180;
@@ -105,7 +113,6 @@ function onClickResultLink(): void {
     <GoogleMap :api-key="API_KEY" :center="destinationLocationLatLng" :zoom="10" style="width: 100%; height: 100vh;"
       :disable-default-ui="true">
       <Marker :options="{ position: destinationLocationLatLng }" />
-      <!-- プレイヤーが刺したピンのマーカーと目的地のマーカーで、線を結ぶ表示をマップ上に出したいが、playerLocationLatLngに値を入れても変化をVueが検知してくれないところで詰まってるため、後回し -->
       <Marker v-if="playerLocationLatLng[playerTurn]" :options="{ position: playerLocationLatLng[playerTurn] }" />
       <Polyline v-if="playerLocationLatLng[playerTurn]"
         :options="{ path: [destinationLocationLatLng, playerLocationLatLng[playerTurn]] }" />

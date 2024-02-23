@@ -13,4 +13,9 @@ export interface ApiInterface {
     findPlayersByGame: (gameId: string) => APIResult<Player[]>;
     findLocation: (postalCode: string) => APIResult<Location>;
     getLocationByPostalCode: (postalCode: string) => APIResult<Location>;
+    saveDistanceToDestination: (
+        gameId: Game.id,
+        playerId: Player.id,
+        distance: number,
+    ) => APIResult<boolean>;
 }
