@@ -69,7 +69,12 @@ const prickPin = (async (location: Location) => {
   playerLocations.value[playerTurn.value] = location;
   playerDistances.value[playerTurn.value] = calcDistanceRes;
 
-  const { value: saveDistance } = await api.saveDistanceToDestination(players.value[playerTurn.value].game_id, players.value[playerTurn.value].id, calcDistanceRes)
+  const { value: saveDistance } = await api.saveDistanceToDestination(
+    players.value[playerTurn.value].game_id,
+    players.value[playerTurn.value].id,
+    location.id,
+    calcDistanceRes
+  );
 
   if (saveDistance) {
     const nextPlayerTurn = playerTurn.value + 1;

@@ -3,6 +3,7 @@
 namespace App\Domain\Player\UseCase;
 
 use App\Domain\Game\Domain\ValueObject\GameId;
+use App\Domain\Location\Domain\ValueObject\LocationId;
 use App\Domain\Player\Domain\Entity\PlayerEntity;
 use App\Domain\Player\Domain\Repository\PlayerRepositoryInterface;
 use App\Domain\Player\Domain\ValueObject\DistanceToDestination;
@@ -22,7 +23,8 @@ final class SavePlayerDistanceUseCase
 
   public function execute(
     PlayerId $playerId,
-    DistanceToDestination $distanceToDestination
+    DistanceToDestination $distanceToDestination,
+    LocationId $drawLocationId
   ): bool {
 
     try {
@@ -33,10 +35,9 @@ final class SavePlayerDistanceUseCase
         gameId: new GameId($playerData->game_id),
         name: new PlayerName($playerData->name),
         turn: new PlayerTurn($playerData->turn),
-        distanceToDestination: new DistanceToDestination($playerData->distance_to_destination)
+        drawLocationId: $drawLocationId,
+        distanceToDestination: $distanceToDestination
       );
-
-      $player->updateDistanceToDestination(distanceToDestination: $distanceToDestination);
 
       $this->playerRepository->update(playerEntity: $player);
 

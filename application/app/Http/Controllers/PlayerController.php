@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Domain\Game\Domain\ValueObject\GameId;
+use App\Domain\Location\Domain\ValueObject\LocationId;
 use App\Domain\Player\Domain\ValueObject\DistanceToDestination;
 use App\Domain\Player\Domain\ValueObject\PlayerId;
 use App\Domain\Player\UseCase\FindPlayersUseCase;
@@ -76,7 +77,11 @@ class PlayerController extends Controller
      */
     public function update(UpdatePlayerRequest $request, string $game, string $player)
     {
-        $res = $this->savePlayerDistanceUseCase->execute(playerId: new PlayerId(id: $player), distanceToDestination: new DistanceToDestination($request->input('distance')));
+        $res = $this->savePlayerDistanceUseCase->execute(
+            playerId: new PlayerId(id: $player),
+            distanceToDestination: new DistanceToDestination($request->input('distance')),
+            drawLocationId: new LocationId((int)$request->input('drawLocationId')),
+        );
 
         if ($res) {
             return response()->json($res, 200);

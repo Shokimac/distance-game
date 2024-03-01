@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('players', function (Blueprint $table) {
-            $table->string('draw_location_id', 50)->after('turn')->comment('スロットで引いた場所')->references('id')->on('location');
+            $table->integer('draw_location_id')->after('turn')->comment('スロットで引き当てたロケーションID')->references('id')->on('location');
         });
     }
 

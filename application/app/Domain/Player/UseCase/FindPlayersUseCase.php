@@ -3,6 +3,7 @@
 namespace App\Domain\Player\UseCase;
 
 use App\Domain\Game\Domain\ValueObject\GameId;
+use App\Domain\Location\Domain\ValueObject\LocationId;
 use App\Domain\Player\Domain\Entity\PlayerEntity;
 use App\Domain\Player\Domain\Repository\PlayerRepositoryInterface;
 use App\Domain\Player\Domain\ValueObject\DistanceToDestination;
@@ -32,6 +33,7 @@ final class FindPlayersUseCase
           gameId: $gameId,
           name: new PlayerName($player->name),
           turn: new PlayerTurn($player->turn),
+          drawLocationId: new LocationId($player->draw_location_id),
           distanceToDestination: new DistanceToDestination($player->distance_to_destination)
         );
 

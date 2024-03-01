@@ -78,10 +78,16 @@ export class ApiModule implements ApiInterface {
         }
     }
 
-    async saveDistanceToDestination(gameId: Game["id"], playerId: Player["id"], distance: number) {
+    async saveDistanceToDestination(
+        gameId: Game["id"],
+        playerId: Player["id"],
+        drawLocationId: Location["id"],
+        distance: number,
+    ) {
         try {
             const { data } = await axios.put<boolean>(`/api/games/${gameId}/players/${playerId}`, {
                 distance,
+                drawLocationId,
             });
             if (data) {
                 return { value: data, error: null! };
