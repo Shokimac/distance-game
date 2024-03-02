@@ -7,6 +7,7 @@ import { useRoute, useRouter } from "vue-router";
 import { Location, Player } from "../../ts/types";
 import SubmitButton from "./ViewParts/SubmitButton.vue";
 import SlotModal from "./ViewParts/SlotModal.vue";
+import GamePlayerInfo from "./ViewParts/GamePlayerInfo.vue";
 
 interface LatLng {
   lat: number,
@@ -32,6 +33,8 @@ const playerTurn = ref(0);
 const showSlotModal = ref(false);
 const showPlayerTurnMordal = ref(false);
 const showResultModal = ref(false);
+const showPlayerInfo = ref(false);
+const showGamePlayersModal = ref(true);
 
 onBeforeMount(async () => {
   const { value: game, error } = await api.findGame(gameId);
@@ -57,17 +60,14 @@ const hideDestinationModal = (() => {
 
 const onShowSlotModal = (() => {
   showSlotModal.value = true;
+  showGamePlayersModal.value = false;
   showPlayerTurnMordal.value = false;
 })
 
 const prickPin = (async (location: Location) => {
   showSlotModal.value = false;
   const pinLatLng: LatLng = { lat: parseFloat(location.latitude), lng: parseFloat(location.longitude) }
-  playerLocationLatLng.value[playerTurn.value] = pinLatLng;
-
-  const calcDistanceRes = calcDistance();
-  playerLocations.value[playerTurn.value] = location;
-  playerDistances.value[playerTurn.value] = calcDistanceRes;
+  const calcDistanceRes = calcDistance(pinLatLng);
 
   const { value: saveDistance } = await api.saveDistanceToDestination(
     players.value[playerTurn.value].game_id,
@@ -78,6 +78,11 @@ const prickPin = (async (location: Location) => {
 
   if (saveDistance) {
     const nextPlayerTurn = playerTurn.value + 1;
+    showGamePlayersModal.value = true;
+    showPlayerInfo.value = false;
+    playerLocationLatLng.value[playerTurn.value] = pinLatLng;
+    playerLocations.value[playerTurn.value] = location;
+    playerDistances.value[playerTurn.value] = calcDistanceRes;
     if (!players.value[nextPlayerTurn]) {
       showResult();
     } else {
@@ -86,15 +91,14 @@ const prickPin = (async (location: Location) => {
   } else {
     console.error('算出した距離の保存処理に失敗しました');
   }
-
 })
 
 const R = Math.PI / 180;
-function calcDistance(): number {
+function calcDistance(pinLatLng: LatLng): number {
   const latA = destinationLocationLatLng.value.lat * R
   const lngA = destinationLocationLatLng.value.lng * R
-  const latB = playerLocationLatLng.value[playerTurn.value].lat * R
-  const lngB = playerLocationLatLng.value[playerTurn.value].lng * R
+  const latB = pinLatLng.lat * R
+  const lngB = pinLatLng.lng * R
 
   return 6371 * Math.acos(Math.cos(latA) * Math.cos(latB) * Math.cos(lngB - lngA) + Math.sin(latA) * Math.sin(latB));
 }
@@ -105,11 +109,16 @@ function changeTurn(): void {
 }
 
 function showResult(): void {
+  showGamePlayersModal.value = false;
   showResultModal.value = true;
 }
 
 function onClickResultLink(): void {
   router.push(`/result/${gameId}`)
+}
+
+function toggleShowInfo(): void {
+  showPlayerInfo.value = !showPlayerInfo.value
 }
 </script>
 
@@ -118,42 +127,12 @@ function onClickResultLink(): void {
     <GoogleMap :api-key="API_KEY" :center="destinationLocationLatLng" :zoom="10" style="width: 100%; height: 100vh;"
       :disable-default-ui="true">
       <Marker :options="{ position: destinationLocationLatLng }" />
-      <Marker v-if="playerLocationLatLng[playerTurn]" :options="{ position: playerLocationLatLng[playerTurn] }" />
-      <Polyline v-if="playerLocationLatLng[playerTurn]"
-        :options="{ path: [destinationLocationLatLng, playerLocationLatLng[playerTurn]] }" />
+      <Marker v-if="playerLocationLatLng[playerTurn - 1]" :options="{ position: playerLocationLatLng[playerTurn - 1] }" />
+      <Polyline v-if="playerLocationLatLng[playerTurn - 1]"
+        :options="{ path: [destinationLocationLatLng, playerLocationLatLng[playerTurn - 1]] }" />
     </GoogleMap>
-    <div class="w-full z-10 absolute bottom-32 bg-white pb-20">
-      <div class="w-8 h-0.5 bg-gray-400 mx-auto mt-3"></div>
-      <ul class="ml-5">
-        <li v-for="(player, index) in  players" :key="index" class="w-full px-2 py-4">
-          <div class="flex w-full">
-            <div class="w-12">
-              <img :src="`/assets/icons/rank_flag_${index + 1}.svg`" :alt="`${index + 1}着ランクアイコン`"
-                class="inline mr-4 max-w-full">
-            </div>
-            <div class="w-full flex">
-              <div class="w-1/2 font-bold text-center">
-                <span class="text-lg">〒</span><span class="text-forest text-3xl font-din">{{
-                  playerLocations[index]?.postal_code.substring(0, 3) ?? '000' }}</span><span
-                  class="font-extrabold text-xl">-</span><span class="text-forest text-3xl font-din">{{
-                    playerLocations[index]?.postal_code.substring(3, 7) ?? '0000' }}</span>
-              </div>
-              <div class="w-1/2 flex flex-col">
-                <div class="w-full text-right font-bold">
-                  <span class="text-forest font-din text-3xl">{{ playerDistances[index]?.toFixed(2)
-                    ?? 0
-                  }}</span>km
-                </div>
-                <div class="w-full text-sm truncate">
-                  <img :src="`/assets/icons/map-pin-user-fill.svg`" alt="ユーザーアイコン" class="inline mr-0.5">{{ player.name
-                  }}さん
-                </div>
-              </div>
-            </div>
-          </div>
-        </li>
-      </ul>
-    </div>
+    <GamePlayerInfo v-show="showGamePlayersModal" :players="players" :player-locations="playerLocations"
+      :player-distances="playerDistances" :show-player-info="showPlayerInfo" @toggle-show-info="toggleShowInfo" />
     <div v-if="showPlayerTurnMordal" class="w-full z-20 absolute bottom-0 bg-white pb-10">
       <p class="text-xl font-bold text-center mt-5">{{ playerTurn + 1 }}番目のプレイヤー</p>
       <p class="text-xl font-bold text-center mb-5">{{ players[playerTurn].name }} さんの番です</p>

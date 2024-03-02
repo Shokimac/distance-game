@@ -43,10 +43,10 @@ onBeforeMount(async () => {
             km
           </p>
         </div>
-        <ResultPlayerInfo v-for="(player, index) in players" :key="index" :player="player" :rank="index + 1"
+        <ResultPlayerInfo v-for="(player, index) in players" :key="index" :player="player" :rank="index + 2"
           :draw-location="drawLocations[player.draw_location_id]" />
         <div class="mt-2 w-full mx-auto">
-          <SubmitButton label="もう一度遊ぶ" />
+          <SubmitButton label="同じプレイヤーでもう一度遊ぶ" />
         </div>
         <div class="w-3/4 mt-5 mx-auto">
           <SubmitButton label="TOPに戻る" />

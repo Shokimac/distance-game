@@ -14,7 +14,7 @@ const { player, rank, drawLocation } = props;
 <template>
   <div class="flex w-full mt-2">
     <div class="w-2/12">
-      <img :src="`/assets/icons/rank_flag_2.svg`" :alt="`${rank}着ランクアイコン`" class="inline mr-4 max-w-full">
+      <img :src="`/assets/icons/rank_flag_${rank}.svg`" :alt="`${rank}着ランクアイコン`" class="inline mr-4 max-w-full">
     </div>
     <div class="w-10/12 flex">
       <div class="w-1/2 font-bold text-center">
