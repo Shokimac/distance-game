@@ -131,8 +131,9 @@ function toggleShowInfo(): void {
       <Polyline v-if="playerLocationLatLng[playerTurn - 1]"
         :options="{ path: [destinationLocationLatLng, playerLocationLatLng[playerTurn - 1]] }" />
     </GoogleMap>
-    <GamePlayerInfo v-show="showGamePlayersModal" :players="players" :player-locations="playerLocations"
-      :player-distances="playerDistances" :show-player-info="showPlayerInfo" @toggle-show-info="toggleShowInfo" />
+    <GamePlayerInfo v-show="showGamePlayersModal" :destination-location="destinationLocation" :players="players"
+      :player-locations="playerLocations" :player-distances="playerDistances" :show-player-info="showPlayerInfo"
+      @toggle-show-info="toggleShowInfo" />
     <div v-if="showPlayerTurnMordal" class="w-full z-20 absolute bottom-0 bg-white pb-10">
       <p class="text-xl font-bold text-center mt-5">{{ playerTurn + 1 }}番目のプレイヤー</p>
       <p class="text-xl font-bold text-center mb-5">{{ players[playerTurn].name }} さんの番です</p>
