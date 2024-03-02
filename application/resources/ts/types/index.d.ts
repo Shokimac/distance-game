@@ -10,6 +10,7 @@ export interface Player {
     game_id: string;
     name: string;
     turn: number;
+    draw_location_id: number;
     distance_to_destination: number;
 }
 

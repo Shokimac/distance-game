@@ -46,4 +46,9 @@ final class MysqlLocationRepository implements LocationRepositoryInterface
 
     return DB::select($sql);
   }
+
+  public function findByLocationIds(array $locationIds)
+  {
+    return DB::table($this->locationTableName)->select()->whereIn('id', $locationIds)->get()->all();
+  }
 }

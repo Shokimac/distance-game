@@ -11,4 +11,5 @@ interface LocationRepositoryInterface
   public function find(LocationId $locationId);
   public function findByPostalCoce(PostalCode $postalCode);
   public function findLocationsByHeadPostalCode(PostalCode $postalCode);
+  public function findByLocationIds(array $locationIds);
 }

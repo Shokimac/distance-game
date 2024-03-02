@@ -99,4 +99,18 @@ export class ApiModule implements ApiInterface {
             return { value: null!, error: error };
         }
     }
+
+    async getDrawLocations(gameId: Game["id"]) {
+        try {
+            const { data } = await axios.get<Location[]>(`/api/games/${gameId}/locations`);
+            if (data) {
+                return { value: data, error: null! };
+            }
+            const error: ErrorCode = "failure";
+            return { value: null!, error: error };
+        } catch (e) {
+            const error: ErrorCode = "failure";
+            return { value: null!, error: error };
+        }
+    }
 }
