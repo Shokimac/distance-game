@@ -20,6 +20,8 @@ const api = new ApiModule();
 
 const API_KEY = import.meta.env.VITE_GOOGLE_API_KEY;
 
+const mapZoom = 7;
+
 const gameId = route.params.gameId as string;
 const showGoogleMap = ref(false);
 const showDestinationModal = ref(false);
@@ -124,7 +126,7 @@ function toggleShowInfo(): void {
 
 <template>
   <div class="relative" v-if="showGoogleMap">
-    <GoogleMap :api-key="API_KEY" :center="destinationLocationLatLng" :zoom="10" style="width: 100%; height: 100vh;"
+    <GoogleMap :api-key="API_KEY" :center="destinationLocationLatLng" :zoom="mapZoom" style="width: 100%; height: 100vh;"
       :disable-default-ui="true">
       <Marker :options="{ position: destinationLocationLatLng }" />
       <Marker v-if="playerLocationLatLng[playerTurn - 1]" :options="{ position: playerLocationLatLng[playerTurn - 1] }" />
@@ -133,10 +135,11 @@ function toggleShowInfo(): void {
     </GoogleMap>
     <GamePlayerInfo v-show="showGamePlayersModal" :destination-location="destinationLocation" :players="players"
       :player-locations="playerLocations" :player-distances="playerDistances" :show-player-info="showPlayerInfo"
-      @toggle-show-info="toggleShowInfo" />
+      :show-player-turn-mordal="showPlayerTurnMordal" @toggle-show-info="toggleShowInfo" />
     <div v-if="showPlayerTurnMordal" class="w-full z-20 absolute bottom-0 bg-white pb-10">
       <p class="text-xl font-bold text-center mt-5">{{ playerTurn + 1 }}番目のプレイヤー</p>
-      <p class="text-xl font-bold text-center mb-5">{{ players[playerTurn].name }} さんの番です</p>
+      <p class="text-xl font-bold text-center mb-5"><span class="text-forest">{{ players[playerTurn].name }}</span> さんの番です
+      </p>
       <SubmitButton label="スロットを回す" @click="onShowSlotModal" />
     </div>
     <div v-if="showResultModal" class="w-full z-20 absolute bottom-0 bg-white pb-10">

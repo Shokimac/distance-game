@@ -59,9 +59,9 @@ const prickPin = ((): void => {
 <template>
   <div class="w-full h-screen z-10 bg-shadow absolute top-0 left-0 flex justify-center items-center">
     <div class="w-full py-8 mx-4 bg-white rounded-lg z-20">
-      <div class="mb-5 mx-auto">
-        <p class="text-center">各スロットをタップして止めて</p>
-        <p class="text-center">ピンを刺す場所を決定してください</p>
+      <div class="mb-5 mx-auto text-center">
+        <p>各スロットをタップして止めて</p>
+        <p>ピンを刺す場所を決定してください</p>
       </div>
       <div class="flex mx-2 justify-between mb-4 overflow-y-hidden">
         <SlotNumber v-for="(number, index) in headCodeList" :index="index" :number="number" :key="index" :type="'head'"

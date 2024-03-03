@@ -7,11 +7,12 @@ interface Props {
   players: Player[],
   playerLocations: Location[],
   playerDistances: number[],
-  showPlayerInfo: boolean
+  showPlayerInfo: boolean,
+  showPlayerTurnMordal: boolean,
 }
 const props = defineProps<Props>();
 const { destinationLocation, players } = props
-const { playerLocations, showPlayerInfo } = toRefs(props)
+const { playerLocations, showPlayerInfo, showPlayerTurnMordal } = toRefs(props)
 
 interface Emits {
   (event: "toggleShowInfo"): void;
@@ -23,19 +24,22 @@ function toggleShowInfo() {
 </script>
 
 <template>
-  <div class="w-full z-10 absolute bottom-32 bg-white pb-20">
-    <div class="w-8 h-0.5 bg-gray-400 mx-auto mt-3" @click="toggleShowInfo"></div>
+  <div class="w-full z-10 absolute bottom-32 bg-white pb-20" v-if="showPlayerTurnMordal">
+    <div class="w-full" @click="toggleShowInfo">
+      <div class="w-8 h-1 bg-gray-400 mx-auto mt-3"></div>
+    </div>
     <ul class="ml-5" v-show="showPlayerInfo">
-      <li>
-        目的地: {{ destinationLocation.prefecture + destinationLocation.city + destinationLocation.town }}
+      <li class="text-center">
+        <p class="text-lg">目的地</p>
+        <p class="text-xl font-bold">{{ destinationLocation.prefecture + destinationLocation.city +
+          destinationLocation.town }}</p>
       </li>
-      <li v-for="(player, index) in  players" :key="index" class="w-full px-2 py-4">
+      <li v-for="(player, index) in  players" :key="index" class="w-full px-1 py-4">
         <div class="flex w-full">
-          <div class="w-12">
-            <img :src="`/assets/icons/rank_flag_${index + 1}.svg`" :alt="`${index + 1}着ランクアイコン`"
-              class="inline mr-4 max-w-full">
+          <div class="flex align-items mx-1 w-12">
+            <img :src="`/assets/icons/turn_${index + 1}.svg`" :alt="`${index + 1}番アイコン`" class="inline">
           </div>
-          <div class="w-full flex flex-wrap">
+          <div class="w-full flex flex-wrap ml-1">
             <div class="w-1/2 font-bold text-center">
               <span class="text-lg">〒</span><span class="text-forest text-3xl font-din">{{
                 playerLocations[index]?.postal_code.substring(0, 3) ?? '000' }}</span><span
@@ -48,8 +52,9 @@ function toggleShowInfo() {
                 }}さん
               </div>
             </div>
-            <div class="w-full" v-if="playerLocations[index] !== undefined">
-              {{ playerLocations[index].prefecture + playerLocations[index].city + playerLocations[index].town }}
+            <div class="w-full truncate" v-if="playerLocations[index] !== undefined">
+              住所: <span class="font-bold">{{ playerLocations[index].prefecture + playerLocations[index].city +
+                playerLocations[index].town }}</span>
             </div>
           </div>
         </div>
