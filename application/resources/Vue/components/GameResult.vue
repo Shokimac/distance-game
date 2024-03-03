@@ -45,19 +45,20 @@ function goTop() {
         after:content-[''] after:h-0.5 after:w-12 after:bg-forest after:ml-4 after:absolute after:top-1/3 after:right-14">
       結果発表</h1>
 
-    <div class="mt-2 w-full text-center">
+    <div class="mt-2 w-full text-center" v-if="destination.prefecture">
       <p>今回の目的地</p>
       <p class="font-bold text-xl">{{ destination.prefecture + destination.city + destination.town }}</p>
     </div>
     <div class="mt-2 w-full bg-[url('/assets/images/congrats.svg')] bg-contain bg-no-repeat grow relative">
-      <div class="w-4/5 absolute left-10 top-48 bg-white">
+      <div class="w-4/5 absolute left-10 top-48 bg-white" v-if="topPlayer">
         <div class="w-full py-1 bg-white border-2 border-forest text-center">
           <p class="text-xl"><span class="text-forest font-bold">{{ topPlayer.name }}</span>さん</p>
           <p class="text-lg font-bold">目的地までの距離 <span class="text-forest font-bold text-3xl font-din">{{
             topPlayer.distance_to_destination }}</span>
             km
           </p>
-          <p class="font-bold truncate text-lg">{{ drawLocations[topPlayer.draw_location_id].prefecture +
+          <p v-if="drawLocations[topPlayer.draw_location_id]" class="font-bold truncate text-lg">{{
+            drawLocations[topPlayer.draw_location_id].prefecture +
             drawLocations[topPlayer.draw_location_id].city +
             drawLocations[topPlayer.draw_location_id].town }}</p>
         </div>
