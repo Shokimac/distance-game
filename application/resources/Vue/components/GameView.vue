@@ -77,7 +77,6 @@ const prickPin = (async (location: Location) => {
     location.id,
     calcDistanceRes
   );
-
   if (saveDistance) {
     const nextPlayerTurn = playerTurn.value + 1;
     showGamePlayersModal.value = true;
@@ -142,7 +141,7 @@ function toggleShowInfo(): void {
       </p>
       <SubmitButton label="スロットを回す" @click="onShowSlotModal" />
     </div>
-    <div v-if="showResultModal" class="w-full z-20 absolute bottom-0 bg-white pb-10">
+    <div v-if="showResultModal" class="w-full absolute bottom-0 bg-white pb-20 pt-20">
       <SubmitButton label="結果発表はこちら" @click="onClickResultLink" />
     </div>
     <DestinationModal v-if="showDestinationModal" @hide-destination-modal="hideDestinationModal"
