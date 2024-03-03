@@ -77,17 +77,20 @@ const prickPin = (async (location: Location) => {
     location.id,
     calcDistanceRes
   );
+
   if (saveDistance) {
-    const nextPlayerTurn = playerTurn.value + 1;
     showGamePlayersModal.value = true;
     showPlayerInfo.value = false;
     playerLocationLatLng.value[playerTurn.value] = pinLatLng;
     playerLocations.value[playerTurn.value] = location;
     playerDistances.value[playerTurn.value] = calcDistanceRes;
-    if (!players.value[nextPlayerTurn]) {
-      showResult();
+
+    playerTurn.value++;
+    if (!players.value[playerTurn.value]) {
+      showGamePlayersModal.value = false;
+      showResultModal.value = true;
     } else {
-      changeTurn();
+      showPlayerTurnMordal.value = true;
     }
   } else {
     console.error('算出した距離の保存処理に失敗しました');
@@ -102,16 +105,6 @@ function calcDistance(pinLatLng: LatLng): number {
   const lngB = pinLatLng.lng * R
 
   return 6371 * Math.acos(Math.cos(latA) * Math.cos(latB) * Math.cos(lngB - lngA) + Math.sin(latA) * Math.sin(latB));
-}
-
-function changeTurn(): void {
-  playerTurn.value++;
-  showPlayerTurnMordal.value = true;
-}
-
-function showResult(): void {
-  showGamePlayersModal.value = false;
-  showResultModal.value = true;
 }
 
 function onClickResultLink(): void {
@@ -135,13 +128,13 @@ function toggleShowInfo(): void {
     <GamePlayerInfo v-show="showGamePlayersModal" :destination-location="destinationLocation" :players="players"
       :player-locations="playerLocations" :player-distances="playerDistances" :show-player-info="showPlayerInfo"
       :show-player-turn-mordal="showPlayerTurnMordal" @toggle-show-info="toggleShowInfo" />
-    <div v-if="showPlayerTurnMordal" class="w-full z-20 absolute bottom-0 bg-white pb-10">
+    <div v-if="showPlayerTurnMordal && players[playerTurn]" class="w-full z-20 absolute bottom-0 bg-white pb-10">
       <p class="text-xl font-bold text-center mt-5">{{ playerTurn + 1 }}番目のプレイヤー</p>
       <p class="text-xl font-bold text-center mb-5"><span class="text-forest">{{ players[playerTurn].name }}</span> さんの番です
       </p>
       <SubmitButton label="スロットを回す" @click="onShowSlotModal" />
     </div>
-    <div v-if="showResultModal" class="w-full absolute bottom-0 bg-white pb-20 pt-20">
+    <div v-if="showResultModal" class="w-full absolute bottom-0 bg-white pb-10 pt-10">
       <SubmitButton label="結果発表はこちら" @click="onClickResultLink" />
     </div>
     <DestinationModal v-if="showDestinationModal" @hide-destination-modal="hideDestinationModal"
