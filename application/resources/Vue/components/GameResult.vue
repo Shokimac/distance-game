@@ -2,12 +2,13 @@
 import { ApiModule } from '../../ts/api/ApiModule';
 import { ref, onBeforeMount } from 'vue';
 import SubmitButton from './ViewParts/SubmitButton.vue';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import { Player, Location } from '../../ts/types';
 import ResultPlayerInfo from './ViewParts/ResultPlayerInfo.vue';
 
 const api = new ApiModule();
 const route = useRoute();
+const router = useRouter();
 const gameId = route.params.gameId as string;
 const topPlayer = ref(<Player>{});
 const players = ref(<Player[]>[]);
@@ -23,6 +24,10 @@ onBeforeMount(async () => {
   drawLocations.value = drawLocationData;
   players.value = value;
 })
+
+function goTop() {
+  router.push('/');
+}
 
 </script>
 
@@ -45,9 +50,10 @@ onBeforeMount(async () => {
         </div>
         <ResultPlayerInfo v-for="(player, index) in players" :key="index" :player="player" :rank="index + 2"
           :draw-location="drawLocations[player.draw_location_id]" />
-        <div class="mt-2 w-full mx-auto">
+        <!-- ↓もう一度遊ぶボタンは後で対応。とりあえず、デプロイを先にやる -->
+        <!-- <div class="mt-2 w-full mx-auto">
           <SubmitButton label="同じプレイヤーでもう一度遊ぶ" />
-        </div>
+        </div> -->
         <div class="w-3/4 mt-5 mx-auto">
           <SubmitButton label="TOPに戻る" />
         </div>
