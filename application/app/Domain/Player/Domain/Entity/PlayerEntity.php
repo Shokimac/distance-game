@@ -3,6 +3,7 @@
 namespace App\Domain\Player\Domain\Entity;
 
 use App\Domain\Game\Domain\ValueObject\GameId;
+use App\Domain\Location\Domain\ValueObject\LocationId;
 use App\Domain\Player\Domain\ValueObject\DistanceToDestination;
 use App\Domain\Player\Domain\ValueObject\PlayerId;
 use App\Domain\Player\Domain\ValueObject\PlayerName;
@@ -14,6 +15,7 @@ final class PlayerEntity
   private $gameId;
   private $name;
   private $turn;
+  private $drawLocationId;
   private $distanceToDestination;
 
   public function __construct(
@@ -21,12 +23,14 @@ final class PlayerEntity
     GameId $gameId,
     PlayerName $name,
     PlayerTurn $turn,
+    LocationId $drawLocationId,
     DistanceToDestination $distanceToDestination
   ) {
     $this->playerId = $playerId;
     $this->gameId = $gameId;
     $this->name = $name;
     $this->turn = $turn;
+    $this->drawLocationId = $drawLocationId;
     $this->distanceToDestination = $distanceToDestination;
   }
 
@@ -50,6 +54,11 @@ final class PlayerEntity
     return $this->turn;
   }
 
+  public function getDrawLocationId(): LocationId
+  {
+    return $this->drawLocationId;
+  }
+
   public function getDistanceToDestination(): DistanceToDestination
   {
     return $this->distanceToDestination;
@@ -62,6 +71,7 @@ final class PlayerEntity
       'game_id' => $this->getGameId()->value(),
       'name' => $this->getName()->value(),
       'turn' => $this->getTurn()->value(),
+      'draw_location_id' => $this->getDrawLocationId()->value(),
       'distance_to_destination' => $this->getDistanceToDestination()->value()
     ];
   }

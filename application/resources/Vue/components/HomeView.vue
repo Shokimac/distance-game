@@ -59,9 +59,9 @@ const toPlayerRegist = (): void => {
   <div class="flex justify-center min-h-screen absolute bg-skyblue">
     <div class="w-11/12">
       <img :src="'assets/images/main_image.svg'" alt="main image" class="w-full mt-20 mx-auto" />
-      <h1 class="mt-16 mb-10 text-white flex align-center justify-center font-din text-3xl
-      before:content-[''] before:h-px before:w-16 before:bg-white before:mr-4
-      after:content-[''] after:h-px after:w-16 after:bg-white after:ml-4">DISTANCE GAME</h1>
+      <h1 class="mt-16 mb-10 text-white relative flex align-center justify-center font-din text-3xl before:absolute before:top-1/3  before:left-6
+      before:content-[''] before:h-px before:w-14 before:bg-white before:mr-4 after:absolute after:top-1/3 after:right-6
+      after:content-[''] after:h-px after:w-14 after:bg-white after:ml-4">DISTANCE GAME</h1>
       <SubmitButton :type="undefined" :label="'ゲームを始める'" @click="toPlayerRegist" />
       <button class="text-white font-bold text-lg block mx-auto mt-9" @click="showInfoModal">
         <img :src="'assets/icons/information-fill.svg'" alt="ゲームの遊び方" class="inline">

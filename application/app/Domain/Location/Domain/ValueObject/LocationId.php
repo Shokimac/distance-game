@@ -10,7 +10,7 @@ final class LocationId
 
   public function __construct(int $locationId)
   {
-    if (empty($locationId) || $locationId < 0) {
+    if (is_null($locationId) || $locationId < 0) {
       throw new Exception();
     }
 

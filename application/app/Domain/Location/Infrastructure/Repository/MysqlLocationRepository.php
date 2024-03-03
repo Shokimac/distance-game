@@ -46,4 +46,18 @@ final class MysqlLocationRepository implements LocationRepositoryInterface
 
     return DB::select($sql);
   }
+
+  public function findByLocationIds(array $locationIds)
+  {
+    return DB::table($this->locationTableName)->select()->whereIn('id', $locationIds)->get()->all();
+  }
+
+  public function findLocationsByHeadPostalCodeRange(int $from, int $to)
+  {
+    $sql = 'SELECT * FROM ' . $this->locationTableName . PHP_EOL;
+    $sql .= 'WHERE ' . PHP_EOL;
+    $sql .= "postal_code LIKE '{$from}%' OR postal_code LIKE '{$to}%'";
+
+    return DB::select($sql);
+  }
 }

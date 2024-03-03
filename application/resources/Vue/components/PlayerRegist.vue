@@ -85,18 +85,20 @@ const checkForm = (gamePlayers: string[]): boolean => {
       <div class="h-6">
         <p v-show="isNotEnoughPlayers" class="text-center font-bold text-red-500 mt-2">{{ errorMessage }}</p>
       </div>
-      <div class="mt-3 w-9/12 h-56 mx-auto">
+      <div class="mt-3 w-9/12 mx-auto">
         <form @submit.prevent="execRegist" method="post">
           <PlayerRegistForm v-for="(value, key) in registForms" :key="key" :num="value.num" v-show="value.isDisplay"
             :is-error="isNotEnoughPlayers" />
-          <div class="w-full mt-8 mb-10 flex justify-center">
+          <div class="w-full mt-8 flex justify-center">
             <div @click="addForm" v-show="!(registForms.length === MAX_FORM_COUNT)">
               <div
                 class="w-9 h-9 bg-forest rounded-full flex justify-center text-white font-bold text-2xl cursor-pointer">+
               </div>
             </div>
           </div>
-          <SubmitButton :type="'submit'" :label="'目的地を決める'" />
+          <div class="mt-4 mb-10">
+            <SubmitButton :type="'submit'" :label="'目的地を決める'" />
+          </div>
         </form>
       </div>
     </div>

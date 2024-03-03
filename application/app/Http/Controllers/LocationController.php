@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Domain\Game\Domain\ValueObject\GameId;
 use App\Domain\Location\Domain\ValueObject\LocationId;
 use App\Domain\Location\Domain\ValueObject\PostalCode;
 use App\Domain\Location\UseCase\FindLocationByPostalCodeUseCase;
 use App\Domain\Location\UseCase\FindLocationUseCase;
+use App\Domain\Location\UseCase\GetDrawLocationsByGameIdUseCase;
 use App\Http\Requests\StoreLocationRequest;
 use App\Http\Requests\UpdateLocationRequest;
 use App\Models\Location;
@@ -15,21 +17,26 @@ class LocationController extends Controller
 {
     private $findLocationUseCase;
     private $findLocationByPostalCodeUseCase;
+    private $getDrawLocationsByGameIdUseCase;
 
     public function __construct(
         FindLocationUseCase $findLocationUseCase,
-        FindLocationByPostalCodeUseCase $findLocationByPostalCodeUseCase
+        FindLocationByPostalCodeUseCase $findLocationByPostalCodeUseCase,
+        GetDrawLocationsByGameIdUseCase $getDrawLocationsByGameIdUseCase
     ) {
         $this->findLocationUseCase = $findLocationUseCase;
         $this->findLocationByPostalCodeUseCase = $findLocationByPostalCodeUseCase;
+        $this->getDrawLocationsByGameIdUseCase = $getDrawLocationsByGameIdUseCase;
     }
 
     /**
-     * Display a listing of the resource.
+     * 
      */
-    public function index()
+    public function index(string $gameId)
     {
-        //
+        $res = $this->getDrawLocationsByGameIdUseCase->execute(gameId: new GameId($gameId));
+
+        return response()->json($res, 200);
     }
 
     /**

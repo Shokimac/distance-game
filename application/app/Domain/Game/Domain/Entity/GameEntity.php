@@ -66,6 +66,7 @@ final class GameEntity
       gameId: $this->getId(),
       name: $playerName,
       turn: $playerTurn,
+      drawLocationId: new LocationId(0), // スロットを引く前なので0
       distanceToDestination: new DistanceToDestination(0),
     );
 

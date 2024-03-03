@@ -8,9 +8,16 @@ type APIResult<T> = Promise<{
 }>;
 
 export interface ApiInterface {
-    createGame: (playerNames: string[]) => APIResult<Game>;
-    findGame: (gameId: string) => APIResult<Game>;
-    findPlayersByGame: (gameId: string) => APIResult<Player[]>;
-    findLocation: (postalCode: string) => APIResult<Location>;
-    getLocationByPostalCode: (postalCode: string) => APIResult<Location>;
+    createGame: (playerNames: Player["name"][]) => APIResult<Game>;
+    findGame: (gameId: Game["id"]) => APIResult<Game>;
+    findPlayersByGame: (gameId: Game["id"]) => APIResult<Player[]>;
+    findLocation: (postalCode: Location["postal_code"]) => APIResult<Location>;
+    getLocationByPostalCode: (postalCode: Location["postal_code"]) => APIResult<Location>;
+    saveDistanceToDestination: (
+        gameId: Game["id"],
+        playerId: Player["id"],
+        drawLocationId: Location["id"],
+        distance: number,
+    ) => APIResult<boolean>;
+    getDrawLocations: (gameId: Game["id"]) => APIResult<Location[]>;
 }

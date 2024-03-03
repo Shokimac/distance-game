@@ -28,10 +28,18 @@ final class FindLocationByPostalCodeUseCase
     $locationData = $this->locationRepository->findByPostalCoce(postalCode: $postalCode);
 
     if (empty($locationData)) {
-      while (true) {
-        $locations = $this->locationRepository->findLocationsByHeadPostalCode(postalCode: $postalCode);
-        if (empty($locations) === false) {
-          break;
+      $locations = $this->locationRepository->findLocationsByHeadPostalCode(postalCode: $postalCode);
+      if (empty($locations)) { // 頭3桁から始まる郵便番号すら無い場合
+        $range = 1; // スロットで出した郵便番号の頭3桁から広げていく範囲
+        while (true) {
+          $from = (int)$postalCode->headValue() - $range;
+          $to = (int)$postalCode->headValue() + $range;
+
+          $locations = $this->locationRepository->findLocationsByHeadPostalCodeRange(from: $from, to: $to);
+          if (empty($locations) === false) {
+            break;
+          }
+          $range++; // 範囲を広げる
         }
       }
       $random_key = array_rand($locations, 1);
