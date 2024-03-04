@@ -18,7 +18,7 @@ https://github.com/Shokimac/distance-game/assets/64714255/bbdc0700-6d02-46c9-889
 ### 技術スタック
 - PHP 8.1.24
 - Laravel 10.25.2 （ドメイン駆動設計）
-- Vue 3.3.4
+- Vue.js 3.3.4
 - TypeScript 5.2.2
 - MySQL 8.0.34
 - AWS CDK 2.100.0
