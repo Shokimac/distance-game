@@ -14,6 +14,7 @@ d-game (仮)
 
 ### ゲームデモ動画
 ローカル環境で録画しているため、動作がもたついてる点はご了承ください...
+
 https://github.com/Shokimac/distance-game/assets/64714255/bbdc0700-6d02-46c9-8890-920cfdeda783
 
 ### 技術スタック
