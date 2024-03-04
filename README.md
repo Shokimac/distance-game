@@ -12,12 +12,13 @@ d-game (仮)
 4. 弾き出した郵便番号の緯度経度と目的地の緯度経度を直線で結んだ距離を算出（単位: km）
 5. 最も目的地と近い距離を出したユーザーが勝利
 
-### ゲーム動画
+### ゲームデモ動画
+ローカル環境で録画しているため、動作がもたついてる点はご了承ください...
 https://github.com/Shokimac/distance-game/assets/64714255/bbdc0700-6d02-46c9-8890-920cfdeda783
 
 ### 技術スタック
 - PHP 8.1.24
-- Laravel 10.25.2 （ドメイン駆動設計）
+- Laravel 10.25.2
 - Vue.js 3.3.4
 - TypeScript 5.2.2
 - MySQL 8.0.34
@@ -25,9 +26,10 @@ https://github.com/Shokimac/distance-game/assets/64714255/bbdc0700-6d02-46c9-889
 - Docker / Docker-compose
 - GoogleMaps API
 
+バックエンド側でドメイン駆動設計を取り入れてみています。
+
 ## 機能
 - ユーザー登録
-- スロット機能
-- 距離算出
-- マップ上で距離を可視化
+- スロット
+- 2地点距離算出
 - 結果表示
