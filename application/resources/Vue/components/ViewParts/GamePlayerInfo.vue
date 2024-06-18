@@ -1,25 +1,25 @@
 <script setup lang="ts">
-import { toRefs } from 'vue'
-import { Location, Player } from '../../../ts/types';
+import { toRefs } from "vue";
+import { Location, Player } from "../../../ts/types";
 
 interface Props {
-  destinationLocation: Location,
-  players: Player[],
-  playerLocations: Location[],
-  playerDistances: number[],
-  showPlayerInfo: boolean,
-  showPlayerTurnMordal: boolean,
+	destinationLocation: Location;
+	players: Player[];
+	playerLocations: Location[];
+	playerDistances: number[];
+	showPlayerInfo: boolean;
+	showPlayerTurnMordal: boolean;
 }
 const props = defineProps<Props>();
-const { destinationLocation, players } = props
-const { playerLocations, showPlayerInfo, showPlayerTurnMordal } = toRefs(props)
+const { destinationLocation, players } = props;
+const { playerLocations, showPlayerInfo, showPlayerTurnMordal } = toRefs(props);
 
 interface Emits {
-  (event: "toggleShowInfo"): void;
+	(event: "toggleShowInfo"): void;
 }
 const emits = defineEmits<Emits>();
 function toggleShowInfo() {
-  emits('toggleShowInfo');
+	emits("toggleShowInfo");
 }
 </script>
 

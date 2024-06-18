@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { toRefs } from "vue";
 interface Props {
-  num: number,
-  isError: boolean
+	num: number;
+	isError: boolean;
 }
 
 const props = defineProps<Props>();

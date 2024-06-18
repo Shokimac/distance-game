@@ -1,33 +1,39 @@
 <script setup lang="ts">
 import { toRefs } from "vue";
 interface Props {
-  displayInfoModal: boolean,
-  infoNum: number,
-  imgFileName: string,
-  infoBody: string,
-  displayPrevButton: boolean,
-  displayNextButton: boolean,
+	displayInfoModal: boolean;
+	infoNum: number;
+	imgFileName: string;
+	infoBody: string;
+	displayPrevButton: boolean;
+	displayNextButton: boolean;
 }
 
 const props = defineProps<Props>();
-const { displayInfoModal, infoNum, imgFileName, infoBody, displayPrevButton, displayNextButton } = toRefs(props);
+const {
+	displayInfoModal,
+	infoNum,
+	imgFileName,
+	infoBody,
+	displayPrevButton,
+	displayNextButton,
+} = toRefs(props);
 
 interface Emits {
-  (event: "showNextInfoModal", key: number): void;
-  (event: "showPrevInfoModal", key: number): void;
-  (event: "hideInfoModal", key: number): void;
+	(event: "showNextInfoModal", key: number): void;
+	(event: "showPrevInfoModal", key: number): void;
+	(event: "hideInfoModal", key: number): void;
 }
 const emit = defineEmits<Emits>();
 function showNextInfoModal() {
-  emit('showNextInfoModal', infoNum.value);
+	emit("showNextInfoModal", infoNum.value);
 }
 function showPrevInfoModal() {
-  emit('showPrevInfoModal', infoNum.value);
+	emit("showPrevInfoModal", infoNum.value);
 }
 function hideInfoModal() {
-  emit('hideInfoModal', infoNum.value);
+	emit("hideInfoModal", infoNum.value);
 }
-
 </script>
 <template>
   <div v-show="displayInfoModal"

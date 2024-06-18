@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { toRefs } from "vue"
-import SubmitButton from './SubmitButton.vue';
-import { Location } from '../../../ts/types';
+import { toRefs } from "vue";
+import SubmitButton from "./SubmitButton.vue";
+import { Location } from "../../../ts/types";
 
 interface Props {
-  location: Location
+	location: Location;
 }
 
 const props = defineProps<Props>();
@@ -13,13 +13,13 @@ const topPostalCode = location.postal_code.substring(0, 3);
 const bottomPostalCode = location.postal_code.substring(3, 7);
 
 interface Emits {
-  (event: "hideDestinationModal"): void
+	(event: "hideDestinationModal"): void;
 }
 const emit = defineEmits<Emits>();
 
-const hideDestinationModal = (() => {
-  emit("hideDestinationModal");
-})
+const hideDestinationModal = () => {
+	emit("hideDestinationModal");
+};
 </script>
 
 <template>
