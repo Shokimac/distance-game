@@ -1,13 +1,13 @@
 {
-  "compilerOptions": {
-      "target": "es5",
-      "module": "es2022",
-      "moduleResolution": "node",
-      "baseUrl": "./",
-      "strict": true,         // Enable strict type-checking options
-      "skipLibCheck": true,   // Skip type checking of declaration files
-      "noImplicitAny": false,  // Bypass raising errors on `any` type
-      "types": ["google.maps"]
-  },
-  "include": ["resources/js/**/*", "resources/Vue/*", "resources/ts/*"]
+	"compilerOptions": {
+		"target": "es5",
+		"module": "es2022",
+		"moduleResolution": "node",
+		"baseUrl": "./",
+		"strict": true, // Enable strict type-checking options
+		"skipLibCheck": true, // Skip type checking of declaration files
+		"noImplicitAny": false, // Bypass raising errors on `any` type
+		"types": ["google.maps"]
+	},
+	"include": ["resources/js/**/*", "resources/Vue/*", "resources/ts/*"]
 }
