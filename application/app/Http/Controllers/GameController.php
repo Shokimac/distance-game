@@ -11,6 +11,7 @@ use App\Http\Requests\StoreGameRequest;
 use App\Http\Requests\UpdateGameRequest;
 use App\Models\Game;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class GameController extends Controller
 {
@@ -65,6 +66,7 @@ class GameController extends Controller
             DB::commit();
         } catch (\Throwable $th) {
             DB::rollBack();
+            Log::error($th->getMessage());
             return response()->json(['message' => '登録に失敗しました。'], 500);
         }
 
