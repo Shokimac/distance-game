@@ -1,59 +1,67 @@
 <script setup lang="ts">
-import SubmitButton from './SubmitButton.vue';
-import SlotNumber from './SlotNumber.vue';
-import { ref } from 'vue';
-import { ApiModule } from '../../../ts/api/ApiModule';
-import { Location } from '../../../ts/types/index.d'
+import SubmitButton from "./SubmitButton.vue";
+import SlotNumber from "./SlotNumber.vue";
+import { ref } from "vue";
+import { ApiModule } from "../../../ts/api/ApiModule";
+import { Location } from "../../../ts/types/index.d";
 
 interface Emits {
-  (event: 'prickPin', location: Location): void
+	(event: "prickPin", location: Location): void;
 }
-const emits = defineEmits<Emits>()
+const emits = defineEmits<Emits>();
 
-const api = new ApiModule()
+const api = new ApiModule();
 
-const headCodeList = ref([0, 0, 0])
-const headRotateList = ref([false, false, false])
-const bottomCodeList = ref([0, 0, 0, 0])
-const bottomRotateList = ref([false, false, false, false])
-const isDisabled = ref(false)
-const location = ref(<Location>{})
+const headCodeList = ref([0, 0, 0]);
+const headRotateList = ref([false, false, false]);
+const bottomCodeList = ref([0, 0, 0, 0]);
+const bottomRotateList = ref([false, false, false, false]);
+const isDisabled = ref(false);
+const location = ref(<Location>{});
 
-const startSlot = ((): void => {
-  headRotateList.value.forEach((tmp, index) => {
-    headRotateList.value[index] = true;
-  })
-  bottomRotateList.value.forEach((tmp, index) => {
-    bottomRotateList.value[index] = true;
-  })
-  isDisabled.value = true
-})
+const startSlot = (): void => {
+	headRotateList.value.forEach((tmp, index) => {
+		headRotateList.value[index] = true;
+	});
+	bottomRotateList.value.forEach((tmp, index) => {
+		bottomRotateList.value[index] = true;
+	});
+	isDisabled.value = true;
+};
 
-const confirmNum = ((number: number, index: number, type: 'head' | 'bottom'): void => {
-  if (type === 'head') {
-    headCodeList.value.splice(index, 1, number);
-    headRotateList.value[index] = false
-  } else {
-    bottomCodeList.value.splice(index, 1, number);
-    bottomRotateList.value[index] = false
-  }
+const confirmNum = (
+	number: number,
+	index: number,
+	type: "head" | "bottom",
+): void => {
+	if (type === "head") {
+		headCodeList.value.splice(index, 1, number);
+		headRotateList.value[index] = false;
+	} else {
+		bottomCodeList.value.splice(index, 1, number);
+		bottomRotateList.value[index] = false;
+	}
 
-  if (!headRotateList.value.includes(true) && !bottomRotateList.value.includes(true) && isDisabled.value) {
-    getLocation();
-  }
-})
+	if (
+		!headRotateList.value.includes(true) &&
+		!bottomRotateList.value.includes(true) &&
+		isDisabled.value
+	) {
+		getLocation();
+	}
+};
 
 async function getLocation() {
-  const postalCode = headCodeList.value.join('') + bottomCodeList.value.join('')
+	const postalCode =
+		headCodeList.value.join("") + bottomCodeList.value.join("");
 
-  const { value, error } = await api.getLocationByPostalCode(postalCode);
-  location.value = value
+	const { value, error } = await api.getLocationByPostalCode(postalCode);
+	location.value = value;
 }
 
-const prickPin = ((): void => {
-  emits('prickPin', location.value);
-})
-
+const prickPin = (): void => {
+	emits("prickPin", location.value);
+};
 </script>
 
 <template>

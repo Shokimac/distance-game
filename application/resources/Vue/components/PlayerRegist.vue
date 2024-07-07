@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import PlayerRegistForm from './ViewParts/PlayerRegistForm.vue';
-import SubmitButton from './ViewParts/SubmitButton.vue';
+import PlayerRegistForm from "./ViewParts/PlayerRegistForm.vue";
+import SubmitButton from "./ViewParts/SubmitButton.vue";
 import { reactive, ref } from "vue";
 import { useRouter } from "vue-router";
-import { ApiModule } from '../../ts/api/ApiModule';
+import { ApiModule } from "../../ts/api/ApiModule";
 interface RegistForm {
-  num: number,
-  isDisplay: boolean
+	num: number;
+	isDisplay: boolean;
 }
 
 const api = new ApiModule();
@@ -15,63 +15,64 @@ const router = useRouter();
 const MAX_FORM_COUNT = 4;
 const MIN_PLAYER = 2;
 const isNotEnoughPlayers = ref(false);
-const errorMessage = ref('');
+const errorMessage = ref("");
 
 const registForms: RegistForm[] = reactive([
-  {
-    num: 1,
-    isDisplay: true
-  },
-  {
-    num: 2,
-    isDisplay: true
-  }
+	{
+		num: 1,
+		isDisplay: true,
+	},
+	{
+		num: 2,
+		isDisplay: true,
+	},
 ]);
 
 const addForm = (): void => {
-  if (registForms.length < MAX_FORM_COUNT) {
-    registForms.push({
-      num: registForms.length + 1,
-      isDisplay: true
-    });
-  }
-}
+	if (registForms.length < MAX_FORM_COUNT) {
+		registForms.push({
+			num: registForms.length + 1,
+			isDisplay: true,
+		});
+	}
+};
 
 const execRegist = async (): Promise<void> => {
-  let form: HTMLInputElement | null;
-  const gamePlayers: string[] = [];
-  for (let i = 1; i <= MAX_FORM_COUNT; i++) {
-    form = document.querySelector(`input[name="form${i}"]`);
-    if (form && form.value) {
-      gamePlayers.push(form.value);
-    }
-  }
-  if (checkForm(gamePlayers)) {
-    try {
-      const { value: game, error } = await api.createGame(gamePlayers);
-      if (game) {
-        router.push(`/game/${game.id}`);
-      }
-      if (error) {
-        errorMessage.value = 'ゲームの登録に失敗しました。お手数ですが、もう一度お試しください。';
-      }
-    } catch (error) {
-      errorMessage.value = '通信に失敗しました。お手数ですが、もう一度お試しください。'
-    }
-  }
-}
+	let form: HTMLInputElement | null;
+	const gamePlayers: string[] = [];
+	for (let i = 1; i <= MAX_FORM_COUNT; i++) {
+		form = document.querySelector(`input[name="form${i}"]`);
+		if (form && form.value) {
+			gamePlayers.push(form.value);
+		}
+	}
+	if (checkForm(gamePlayers)) {
+		try {
+			const { value: game, error } = await api.createGame(gamePlayers);
+			if (game) {
+				router.push(`/game/${game.id}`);
+			}
+			if (error) {
+				errorMessage.value =
+					"ゲームの登録に失敗しました。お手数ですが、もう一度お試しください。";
+			}
+		} catch (error) {
+			errorMessage.value =
+				"通信に失敗しました。お手数ですが、もう一度お試しください。";
+		}
+	}
+};
 
 const checkForm = (gamePlayers: string[]): boolean => {
-  if (gamePlayers.length < MIN_PLAYER) {
-    isNotEnoughPlayers.value = true;
-    errorMessage.value = '最低2名のユーザー登録が必要です。';
-    return false;
-  } else {
-    isNotEnoughPlayers.value = false;
-    return true;
-  }
-}
-
+	if (gamePlayers.length < MIN_PLAYER) {
+		isNotEnoughPlayers.value = true;
+		errorMessage.value = "最低2名のユーザー登録が必要です。";
+		return false;
+	} else {
+		isNotEnoughPlayers.value = false;
+		return true;
+	}
+};
 </script>
 
 <template>

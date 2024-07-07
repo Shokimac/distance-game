@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { ApiModule } from '../../ts/api/ApiModule';
-import { ref, onBeforeMount } from 'vue';
-import SubmitButton from './ViewParts/SubmitButton.vue';
-import { useRoute, useRouter } from 'vue-router';
-import { Player, Location, Game } from '../../ts/types';
-import ResultPlayerInfo from './ViewParts/ResultPlayerInfo.vue';
+import { ApiModule } from "../../ts/api/ApiModule";
+import { ref, onBeforeMount } from "vue";
+import SubmitButton from "./ViewParts/SubmitButton.vue";
+import { useRoute, useRouter } from "vue-router";
+import { Player, Location, Game } from "../../ts/types";
+import ResultPlayerInfo from "./ViewParts/ResultPlayerInfo.vue";
 
 const api = new ApiModule();
 const route = useRoute();
@@ -17,24 +17,26 @@ const players = ref(<Player[]>[]);
 const drawLocations = ref(<Location[]>[]);
 
 onBeforeMount(async () => {
-  const { value: gameData, error: findGameErr } = await api.findGame(gameId);
-  game.value = gameData;
-  const { value: destinationData, error: findDestinationErr } = await api.findLocation(gameData.destination_location_id);
-  destination.value = destinationData;
-  const { value, error } = await api.findPlayersByGame(gameId);
-  const { value: drawLocationData, error: getLocationError } = await api.getDrawLocations(gameId);
-  value.sort((a, b) =>
-    a.distance_to_destination > b.distance_to_destination ? 1 : -1);
-  topPlayer.value = value[0];
-  value.shift();
-  drawLocations.value = drawLocationData;
-  players.value = value;
-})
+	const { value: gameData, error: findGameErr } = await api.findGame(gameId);
+	game.value = gameData;
+	const { value: destinationData, error: findDestinationErr } =
+		await api.findLocation(gameData.destination_location_id);
+	destination.value = destinationData;
+	const { value, error } = await api.findPlayersByGame(gameId);
+	const { value: drawLocationData, error: getLocationError } =
+		await api.getDrawLocations(gameId);
+	value.sort((a, b) =>
+		a.distance_to_destination > b.distance_to_destination ? 1 : -1,
+	);
+	topPlayer.value = value[0];
+	value.shift();
+	drawLocations.value = drawLocationData;
+	players.value = value;
+});
 
 function goTop() {
-  router.push('/');
+	router.push("/");
 }
-
 </script>
 
 <template>

@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { Player, Location } from '../../../ts/types';
+import { Player, Location } from "../../../ts/types";
 
 interface Props {
-  player: Player,
-  rank: number,
-  drawLocation: Location
+	player: Player;
+	rank: number;
+	drawLocation: Location;
 }
 
 const props = defineProps<Props>();

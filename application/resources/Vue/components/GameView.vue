@@ -10,8 +10,8 @@ import SlotModal from "./ViewParts/SlotModal.vue";
 import GamePlayerInfo from "./ViewParts/GamePlayerInfo.vue";
 
 interface LatLng {
-  lat: number,
-  lng: number
+	lat: number;
+	lng: number;
 }
 
 const route = useRoute();
@@ -26,11 +26,11 @@ const gameId = route.params.gameId as string;
 const showGoogleMap = ref(false);
 const showDestinationModal = ref(false);
 const destinationLocation = ref(<Location>{});
-const destinationLocationLatLng = ref(<LatLng>{})
+const destinationLocationLatLng = ref(<LatLng>{});
 const playerLocationLatLng = ref(<{ [key: number]: LatLng }>{});
 const players = ref(<Player[]>[]);
-const playerLocations = ref(<Location[]>[])
-const playerDistances = ref(<number[]>[])
+const playerLocations = ref(<Location[]>[]);
+const playerDistances = ref(<number[]>[]);
 const playerTurn = ref(0);
 const showSlotModal = ref(false);
 const showPlayerTurnMordal = ref(false);
@@ -39,80 +39,92 @@ const showPlayerInfo = ref(false);
 const showGamePlayersModal = ref(true);
 
 onBeforeMount(async () => {
-  const { value: game, error } = await api.findGame(gameId);
-  if (game) {
-    const { value: location, error: locationError } = await api.findLocation(game.destination_location_id);
-    if (location) {
-      destinationLocation.value = location;
-      destinationLocationLatLng.value.lat = parseFloat(location.latitude);
-      destinationLocationLatLng.value.lng = parseFloat(location.longitude);
+	const { value: game, error } = await api.findGame(gameId);
+	if (game) {
+		const { value: location, error: locationError } = await api.findLocation(
+			game.destination_location_id,
+		);
+		if (location) {
+			destinationLocation.value = location;
+			destinationLocationLatLng.value.lat = parseFloat(location.latitude);
+			destinationLocationLatLng.value.lng = parseFloat(location.longitude);
 
-      const { value: playersData, error: getPlayerError } = await api.findPlayersByGame(game.id);
-      players.value = playersData;
-    }
-  }
-  showGoogleMap.value = true;
-  showDestinationModal.value = true;
+			const { value: playersData, error: getPlayerError } =
+				await api.findPlayersByGame(game.id);
+			players.value = playersData;
+		}
+	}
+	showGoogleMap.value = true;
+	showDestinationModal.value = true;
 });
 
-const hideDestinationModal = (() => {
-  showDestinationModal.value = false;
-  showPlayerTurnMordal.value = true;
-})
+const hideDestinationModal = () => {
+	showDestinationModal.value = false;
+	showPlayerTurnMordal.value = true;
+};
 
-const onShowSlotModal = (() => {
-  showSlotModal.value = true;
-  showGamePlayersModal.value = false;
-  showPlayerTurnMordal.value = false;
-})
+const onShowSlotModal = () => {
+	showSlotModal.value = true;
+	showGamePlayersModal.value = false;
+	showPlayerTurnMordal.value = false;
+};
 
-const prickPin = (async (location: Location) => {
-  showSlotModal.value = false;
-  const pinLatLng: LatLng = { lat: parseFloat(location.latitude), lng: parseFloat(location.longitude) }
-  const calcDistanceRes = calcDistance(pinLatLng);
+const prickPin = async (location: Location) => {
+	showSlotModal.value = false;
+	const pinLatLng: LatLng = {
+		lat: parseFloat(location.latitude),
+		lng: parseFloat(location.longitude),
+	};
+	const calcDistanceRes = calcDistance(pinLatLng);
 
-  const { value: saveDistance } = await api.saveDistanceToDestination(
-    players.value[playerTurn.value].game_id,
-    players.value[playerTurn.value].id,
-    location.id,
-    calcDistanceRes
-  );
+	const { value: saveDistance } = await api.saveDistanceToDestination(
+		players.value[playerTurn.value].game_id,
+		players.value[playerTurn.value].id,
+		location.id,
+		calcDistanceRes,
+	);
 
-  if (saveDistance) {
-    showGamePlayersModal.value = true;
-    showPlayerInfo.value = false;
-    playerLocationLatLng.value[playerTurn.value] = pinLatLng;
-    playerLocations.value[playerTurn.value] = location;
-    playerDistances.value[playerTurn.value] = calcDistanceRes;
+	if (saveDistance) {
+		showGamePlayersModal.value = true;
+		showPlayerInfo.value = false;
+		playerLocationLatLng.value[playerTurn.value] = pinLatLng;
+		playerLocations.value[playerTurn.value] = location;
+		playerDistances.value[playerTurn.value] = calcDistanceRes;
 
-    playerTurn.value++;
-    if (!players.value[playerTurn.value]) {
-      showGamePlayersModal.value = false;
-      showResultModal.value = true;
-    } else {
-      showPlayerTurnMordal.value = true;
-    }
-  } else {
-    console.error('算出した距離の保存処理に失敗しました');
-  }
-})
+		playerTurn.value++;
+		if (!players.value[playerTurn.value]) {
+			showGamePlayersModal.value = false;
+			showResultModal.value = true;
+		} else {
+			showPlayerTurnMordal.value = true;
+		}
+	} else {
+		console.error("算出した距離の保存処理に失敗しました");
+	}
+};
 
 const R = Math.PI / 180;
 function calcDistance(pinLatLng: LatLng): number {
-  const latA = destinationLocationLatLng.value.lat * R
-  const lngA = destinationLocationLatLng.value.lng * R
-  const latB = pinLatLng.lat * R
-  const lngB = pinLatLng.lng * R
+	const latA = destinationLocationLatLng.value.lat * R;
+	const lngA = destinationLocationLatLng.value.lng * R;
+	const latB = pinLatLng.lat * R;
+	const lngB = pinLatLng.lng * R;
 
-  return 6371 * Math.acos(Math.cos(latA) * Math.cos(latB) * Math.cos(lngB - lngA) + Math.sin(latA) * Math.sin(latB));
+	return (
+		6371 *
+		Math.acos(
+			Math.cos(latA) * Math.cos(latB) * Math.cos(lngB - lngA) +
+				Math.sin(latA) * Math.sin(latB),
+		)
+	);
 }
 
 function onClickResultLink(): void {
-  router.push(`/result/${gameId}`)
+	router.push(`/result/${gameId}`);
 }
 
 function toggleShowInfo(): void {
-  showPlayerInfo.value = !showPlayerInfo.value
+	showPlayerInfo.value = !showPlayerInfo.value;
 }
 </script>
 
