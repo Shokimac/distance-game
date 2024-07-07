@@ -1,0 +1,11 @@
+{
+  "availability-zones:account=025897504816:region=ap-northeast-1": [
+    "ap-northeast-1a",
+    "ap-northeast-1c",
+    "ap-northeast-1d"
+  ],
+  "hosted-zone:account=025897504816:domainName=d-game.net:region=ap-northeast-1": {
+    "Id": "/hostedzone/Z0914390EASQEUUJ8K67",
+    "Name": "d-game.net."
+  }
+}
