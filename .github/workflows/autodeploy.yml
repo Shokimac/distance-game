@@ -3,7 +3,7 @@ name: EC2 auto deploy
 on:
   push:
     branches:
-      - 'main'
+      - "main"
 
   workflow_dispatch:
 
@@ -40,13 +40,10 @@ jobs:
       - name: Deploy
         run: |
 
-          # SSHのセキュリティグループを開放する
           aws ec2 authorize-security-group-ingress --group-id ${{ secrets.EC2_SECURITY_GROUP_ID }} --protocol tcp --port 22 --cidr ${{ steps.ip.outputs.ipv4 }}/32
 
-          # SSH接続して、git pullする
           echo "${{ secrets.GIT_PRIVATE_KEY }}" > private_key
           chmod 600 private_key
           ssh -oStrictHostKeyChecking=no ${{ secrets.EC2_USER_NAME }}@${{ secrets.EC2_HOST_NAME }} -i private_key "cd /var/www/distance-game/ && git fetch --prune && git checkout main && git pull origin main && composer install --optimize-autoloader --no-dev && yarn run build && php artisan config:cache && php artisan event:cache && php artisan route:cache"
 
-          # SSHのセキュリティグループを閉じる
           aws ec2 revoke-security-group-ingress --group-id ${{ secrets.EC2_SECURITY_GROUP_ID }} --protocol tcp --port 22 --cidr ${{ steps.ip.outputs.ipv4 }}/32
